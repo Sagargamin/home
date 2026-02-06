@@ -1,113 +1,304 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>CyberPie Admin Panel</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberPie | Admin Terminal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon: #00f3ff;
+            --bg: #05070a;
+            --panel: #0f1219;
+            --input-bg: #1a1d26;
+            --text: #e0e6ed;
+            --danger: #ff2a2a;
+        }
 
-<style>
-*{box-sizing:border-box}
-body{
-  margin:0;height:100vh;
-  background:linear-gradient(135deg,#0ea5e9,#020617);
-  font-family:Segoe UI,system-ui;
-  display:flex;align-items:center;justify-content:center;color:#e5e7eb
-}
-.card{
-  background:#020617cc;
-  width:380px;
-  padding:30px;
-  border-radius:22px;
-  box-shadow:0 0 80px #0ea5e966
-}
-h2{text-align:center;color:#38bdf8}
-input,textarea{
-  width:100%;margin:8px 0;padding:12px;
-  border-radius:14px;border:1px solid #38bdf8;
-  background:#020617;color:white
-}
-textarea{height:80px;resize:none}
-button{
-  width:100%;padding:12px;margin-top:10px;
-  border:none;border-radius:30px;
-  font-weight:700;cursor:pointer
-}
-.publish{background:#38bdf8}
-.logout{background:#ef4444}
-.hidden{display:none}
-small{opacity:.7;display:block;text-align:center;margin-top:8px}
-</style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: radial-gradient(circle at 50% 50%, rgba(0, 243, 255, 0.05) 0%, transparent 50%);
+        }
+
+        /* --- Login Overlay --- */
+        #loginOverlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .login-box {
+            background: var(--panel);
+            padding: 40px;
+            border: 1px solid var(--neon);
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .login-box h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--neon);
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: var(--input-bg);
+            border: 1px solid #333;
+            color: #fff;
+            border-radius: 5px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--neon);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            background: var(--neon);
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-family: 'Orbitron', sans-serif;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            box-shadow: 0 0 20px var(--neon);
+            background: #fff;
+        }
+
+        .error-msg {
+            color: var(--danger);
+            font-size: 0.9rem;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* --- Admin Dashboard --- */
+        #adminPanel {
+            display: none; /* Hidden by default */
+            width: 100%;
+            max-width: 600px;
+            margin: 20px;
+        }
+
+        .panel-container {
+            background: var(--panel);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid #333;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 15px;
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            width: auto;
+            padding: 5px 15px;
+            font-size: 0.8rem;
+        }
+
+        .logout-btn:hover {
+            background: var(--danger);
+            color: #fff;
+            box-shadow: 0 0 15px var(--danger);
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            color: #8892b0;
+            font-size: 0.9rem;
+        }
+
+        .file-upload {
+            padding: 10px 0;
+        }
+
+        #statusMsg {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+            color: var(--neon);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="card" id="loginBox">
-  <h2>Admin Login</h2>
-  <input id="user" placeholder="Username">
-  <input id="pass" type="password" placeholder="Password">
-  <button class="publish" onclick="login()">Login</button>
-  <p id="msg" style="color:#f87171;text-align:center"></p>
-</div>
+    <div id="loginOverlay">
+        <div class="login-box">
+            <h2>ACCESS REQUIRED</h2>
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button onclick="checkLogin()">Initialize</button>
+            <div id="loginError" class="error-msg">ACCESS DENIED: Invalid Credentials</div>
+        </div>
+    </div>
 
-<div class="card hidden" id="panel">
-  <h2>Create Post</h2>
+    <div id="adminPanel">
+        <div class="panel-container">
+            <div class="panel-header">
+                <h2 style="color:white; font-family:'Orbitron'">ADMIN <span style="color:var(--neon)">CONSOLE</span></h2>
+                <button class="logout-btn" onclick="logout()">LOGOUT</button>
+            </div>
 
-  <input id="title" placeholder="Post Title">
-  <textarea id="desc" placeholder="Post Description"></textarea>
+            <form id="postForm">
+                <label>Post Title</label>
+                <input type="text" id="title" placeholder="e.g. Super Ultra Shader" required>
 
-  <input type="file" id="thumb" accept="image/*">
-  <input id="link" placeholder="Download / Linkvertise Link">
-  <input id="video" placeholder="YouTube Video Link (optional)">
+                <label>Description</label>
+                <textarea id="desc" rows="3" placeholder="Brief details about the content..." required></textarea>
 
-  <button class="publish" onclick="publish()">Publish</button>
-  <button class="logout" onclick="logout()">Logout</button>
-  <small>Video button shows only if link added</small>
-</div>
+                <label>Thumbnail Image (Max 1MB recommended)</label>
+                <input type="file" id="imageInput" accept="image/*" class="file-upload" required>
 
-<script>
-const ADMIN="admin", PASS="saggu12@";
+                <label>Download Link (Linkvertise/Mediafire)</label>
+                <input type="url" id="link" placeholder="https://..." required>
 
-function login(){
-  if(user.value===ADMIN && pass.value===PASS){
-    localStorage.admin="true";
-    loginBox.classList.add("hidden");
-    panel.classList.remove("hidden");
-  } else msg.textContent="Wrong login";
-}
+                <label>YouTube Video Link (Optional)</label>
+                <input type="url" id="video" placeholder="https://youtube.com/...">
 
-function publish(){
-  if(!title.value || !link.value){alert("Title & download link required");return;}
+                <button type="submit">PUBLISH TO MAINFRAME</button>
+            </form>
 
-  const reader=new FileReader();
-  reader.onload=()=>{
-    const posts=JSON.parse(localStorage.posts||"[]");
-    posts.unshift({
-      title:title.value,
-      desc:desc.value,
-      link:link.value,
-      video:video.value,
-      thumb:reader.result,
-      time:new Date().toLocaleString()
-    });
-    localStorage.posts=JSON.stringify(posts);
-    alert("Post published!");
-    title.value=desc.value=link.value=video.value="";
-    thumb.value="";
-  };
+            <div id="statusMsg">DATA UPLOADED SUCCESSFULLY</div>
+        </div>
+    </div>
 
-  if(thumb.files[0]) reader.readAsDataURL(thumb.files[0]);
-  else reader.onload();
-}
+    <script>
+        // --- 1. Security & Login Logic ---
+        function checkLogin() {
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            const err = document.getElementById('loginError');
 
-function logout(){
-  localStorage.removeItem("admin");
-  location.reload();
-}
+            if (u === 'admin' && p === 'saggu12@') {
+                // Success
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                sessionStorage.setItem('cyberAuth', 'true');
+            } else {
+                // Fail
+                err.style.display = 'block';
+                document.getElementById('password').value = '';
+            }
+        }
 
-if(localStorage.admin){
-  loginBox.classList.add("hidden");
-  panel.classList.remove("hidden");
-}
-</script>
+        function logout() {
+            sessionStorage.removeItem('cyberAuth');
+            location.reload();
+        }
+
+        // Auto-login if session exists (prevents logout on refresh)
+        if (sessionStorage.getItem('cyberAuth') === 'true') {
+            document.getElementById('loginOverlay').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+        }
+
+        // --- 2. Post Creation Logic ---
+        const form = document.getElementById('postForm');
+        
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Collect Data
+            const title = document.getElementById('title').value;
+            const desc = document.getElementById('desc').value;
+            const link = document.getElementById('link').value;
+            const video = document.getElementById('video').value;
+            const fileInput = document.getElementById('imageInput');
+
+            // Image Processing (File -> Base64)
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const base64Image = e.target.result;
+
+                    // Create Post Object
+                    const newPost = {
+                        id: Date.now(),
+                        title: title,
+                        desc: desc,
+                        link: link,
+                        video: video,
+                        image: base64Image
+                    };
+
+                    savePost(newPost);
+                };
+
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+        });
+
+        function savePost(post) {
+            // Get existing posts
+            let posts = JSON.parse(localStorage.getItem('cyberpie_posts')) || [];
+            
+            // Add new post
+            posts.push(post);
+            
+            // Save back to LocalStorage
+            try {
+                localStorage.setItem('cyberpie_posts', JSON.stringify(posts));
+                
+                // Success UI Feedback
+                const msg = document.getElementById('statusMsg');
+                msg.style.opacity = '1';
+                form.reset();
+                
+                setTimeout(() => {
+                    msg.style.opacity = '0';
+                }, 3000);
+            } catch (err) {
+                alert("Storage Full! Try using a smaller image.");
+                console.error(err);
+            }
+        }
+    </script>
 </body>
 </html>
