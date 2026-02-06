@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sagar Gaming 2X | Home</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         :root {
             --primary: #00f3ff; /* Neon Cyan */
@@ -12,7 +14,6 @@
             --bg-dark: #05070a;
             --card-bg: #0f1219;
             --text-main: #e0e6ed;
-            --glass: rgba(15, 18, 25, 0.8);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -25,9 +26,12 @@
             background-image: 
                 radial-gradient(circle at 10% 20%, rgba(0, 243, 255, 0.1) 0%, transparent 20%),
                 radial-gradient(circle at 90% 80%, rgba(112, 0, 255, 0.1) 0%, transparent 20%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* --- Header --- */
+        /* --- Header & Nav --- */
         header {
             display: flex;
             justify-content: space-between;
@@ -39,6 +43,7 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            flex-wrap: wrap;
         }
 
         .logo {
@@ -51,6 +56,53 @@
         }
 
         .logo span { color: #fff; }
+
+        /* Navigation Menu */
+        nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-link {
+            color: #8892b0;
+            text-decoration: none;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            padding: 8px 15px;
+            border: 1px solid transparent;
+            transition: 0.3s;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+            background: rgba(0, 243, 255, 0.05);
+        }
+
+        /* Mobile Nav Tweak */
+        @media (max-width: 768px) {
+            header { flex-direction: column; gap: 15px; }
+            nav { width: 100%; justify-content: center; flex-wrap: wrap; }
+        }
+
+        /* --- Sections Management --- */
+        .section-view {
+            display: none; /* Hidden by default */
+            animation: fadeIn 0.5s ease;
+            flex: 1;
+        }
+        
+        .section-view.active-view {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
         /* --- Hero Section --- */
         .hero {
@@ -121,60 +173,52 @@
             color: #a0aab5;
             margin-bottom: 20px;
             line-height: 1.4;
-            height: 60px; /* Limit height */
+            height: 60px;
             overflow: hidden;
         }
 
         /* --- Buttons --- */
-        .btn-group {
-            display: flex;
-            gap: 10px;
-        }
-
+        .btn-group { display: flex; gap: 10px; }
         .btn {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: 'Rajdhani', sans-serif;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: 0.3s;
+            flex: 1; padding: 10px; border: none; border-radius: 4px;
+            cursor: pointer; font-family: 'Rajdhani', sans-serif; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1px; transition: 0.3s;
+            text-align: center; text-decoration: none; font-size: 0.9rem;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .btn-download { border: 1px solid var(--primary); color: var(--primary); box-shadow: 0 0 5px var(--primary); }
+        .btn-download:hover { background: var(--primary); color: #000; box-shadow: 0 0 20px var(--primary); }
+        .btn-video { border: 1px solid #ff0055; color: #ff0055; box-shadow: 0 0 5px #ff0055; }
+        .btn-video:hover { background: #ff0055; color: #fff; box-shadow: 0 0 20px #ff0055; }
+
+        /* --- Custom Pages --- */
+        .placeholder-page {
             text-align: center;
-            text-decoration: none;
-            font-size: 0.9rem;
+            padding: 100px 20px;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .placeholder-page h1 { font-size: 3rem; color: var(--primary); text-shadow: 0 0 20px var(--primary); margin-bottom: 20px;}
+        .placeholder-page p { color: #888; font-size: 1.2rem; }
+
+        .about-box {
+            max-width: 600px;
+            margin: 50px auto;
+            background: var(--card-bg);
+            padding: 40px;
+            border: 1px solid var(--primary);
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.1);
+        }
+        .about-item {
+            margin: 20px 0;
+            font-size: 1.2rem;
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 15px;
         }
-
-        .btn-download {
-            background: transparent;
-            border: 1px solid var(--primary);
-            color: var(--primary);
-            box-shadow: 0 0 5px var(--primary);
-        }
-
-        .btn-download:hover {
-            background: var(--primary);
-            color: #000;
-            box-shadow: 0 0 20px var(--primary);
-        }
-
-        .btn-video {
-            background: transparent;
-            border: 1px solid #ff0055;
-            color: #ff0055;
-            box-shadow: 0 0 5px #ff0055;
-        }
-
-        .btn-video:hover {
-            background: #ff0055;
-            color: #fff;
-            box-shadow: 0 0 20px #ff0055;
-        }
+        .about-item i { color: var(--primary); font-size: 1.5rem; }
 
         /* Empty State */
         .no-posts {
@@ -186,11 +230,10 @@
             border-radius: 10px;
         }
 
-        /* Footer */
         footer {
             text-align: center;
             padding: 30px;
-            margin-top: 50px;
+            margin-top: auto;
             border-top: 1px solid rgba(255, 255, 255, 0.05);
             color: #666;
             font-size: 0.8rem;
@@ -201,15 +244,63 @@
 
     <header>
         <div class="logo">Cyber<span>Pie</span></div>
+        <nav>
+            <a onclick="switchTab('home')" class="nav-link active" id="nav-home">Home</a>
+            <a onclick="switchTab('minecraft')" class="nav-link" id="nav-minecraft">Minecraft</a>
+            <a onclick="switchTab('resources')" class="nav-link" id="nav-resources">Resources</a>
+            <a onclick="switchTab('about')" class="nav-link" id="nav-about">About</a>
+        </nav>
     </header>
 
-    <section class="hero">
-        <h1>NotGamerPie Official</h1>
-        <p>Premium scripts, mods, and resources.</p>
-    </section>
+    <div id="view-home" class="section-view active-view">
+        <section class="hero">
+            <h1>NotGamerPie Official</h1>
+            <p>Premium scripts, mods, and resources.</p>
+        </section>
+        <div class="container" id="postsContainer_Home">
+            </div>
+    </div>
 
-    <div class="container" id="postsContainer">
+    <div id="view-minecraft" class="section-view">
+        <div class="placeholder-page">
+            <h1>20k Coming Soon</h1>
+            <p>We are preparing something epic for the 20k milestone.</p>
         </div>
+    </div>
+
+    <div id="view-resources" class="section-view">
+        <div style="padding: 40px 20px; text-align: center;">
+            <h2 style="font-family:'Orbitron'; color:var(--primary);">ALL RESOURCES</h2>
+        </div>
+        <div class="container" id="postsContainer_Res">
+            </div>
+    </div>
+
+    <div id="view-about" class="section-view">
+        <div class="about-box">
+            <h2 style="font-family:'Orbitron'; margin-bottom:30px;">CONTACT INFO</h2>
+            
+            <div class="about-item">
+                <i class="fas fa-envelope"></i>
+                <span>notgamerpie@gmail.com</span>
+            </div>
+            
+            <div class="about-item">
+                <i class="fab fa-youtube"></i>
+                <span>Sagar Gaming 2X</span>
+            </div>
+
+            <div class="about-item">
+                <i class="fab fa-discord"></i>
+                <span>Discord Community</span>
+            </div>
+
+            <div class="about-item">
+                <i class="fab fa-instagram"></i>
+                <span>Instagram</span>
+            </div>
+        </div>
+    </div>
 
     <footer>
         &copy; 2026 CyberPie Created By Sagar Gaming 2X
@@ -220,43 +311,59 @@
             loadPosts();
         });
 
+        function switchTab(tabName) {
+            // 1. Update Navbar Active Class
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            document.getElementById('nav-' + tabName).classList.add('active');
+
+            // 2. Hide all Views
+            document.querySelectorAll('.section-view').forEach(view => view.classList.remove('active-view'));
+
+            // 3. Show Target View
+            document.getElementById('view-' + tabName).classList.add('active-view');
+        }
+
         function loadPosts() {
-            const container = document.getElementById('postsContainer');
-            // Get posts from localStorage
+            // We need to fill TWO containers (Home and Resources)
+            const containers = [
+                document.getElementById('postsContainer_Home'),
+                document.getElementById('postsContainer_Res')
+            ];
+
             const posts = JSON.parse(localStorage.getItem('cyberpie_posts')) || [];
 
-            container.innerHTML = ''; // Clear loading text
+            containers.forEach(container => {
+                container.innerHTML = ''; // Clear loading text
 
-            if (posts.length === 0) {
-                container.innerHTML = '<div class="no-posts"><h2>SYSTEM OFFLINE</h2><p>No posts available yet. Check back later.</p></div>';
-                return;
-            }
-
-            // Loop reversed so newest is first
-            posts.reverse().forEach(post => {
-                // Create Card Elements
-                const card = document.createElement('div');
-                card.className = 'card';
-
-                // Video Button Logic
-                let videoBtnHTML = '';
-                if (post.video && post.video.trim() !== '') {
-                    videoBtnHTML = `<a href="${post.video}" target="_blank" class="btn btn-video">Watch Video</a>`;
+                if (posts.length === 0) {
+                    container.innerHTML = '<div class="no-posts"><h2>SYSTEM OFFLINE</h2><p>No posts available yet. Check back later.</p></div>';
+                    return;
                 }
 
-                card.innerHTML = `
-                    <img src="${post.image}" alt="Thumbnail" class="card-img">
-                    <div class="card-body">
-                        <h3 class="card-title">${post.title}</h3>
-                        <p class="card-desc">${post.desc}</p>
-                        <div class="btn-group">
-                            <a href="${post.link}" target="_blank" class="btn btn-download">Download</a>
-                            ${videoBtnHTML}
-                        </div>
-                    </div>
-                `;
+                // Loop reversed so newest is first
+                posts.slice().reverse().forEach(post => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
 
-                container.appendChild(card);
+                    let videoBtnHTML = '';
+                    if (post.video && post.video.trim() !== '') {
+                        videoBtnHTML = `<a href="${post.video}" target="_blank" class="btn btn-video">Watch Video</a>`;
+                    }
+
+                    card.innerHTML = `
+                        <img src="${post.image}" alt="Thumbnail" class="card-img">
+                        <div class="card-body">
+                            <h3 class="card-title">${post.title}</h3>
+                            <p class="card-desc">${post.desc}</p>
+                            <div class="btn-group">
+                                <a href="${post.link}" target="_blank" class="btn btn-download">Download</a>
+                                ${videoBtnHTML}
+                            </div>
+                        </div>
+                    `;
+
+                    container.appendChild(card);
+                });
             });
         }
     </script>
