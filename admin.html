@@ -3,16 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CyberPie | Admin Terminal</title>
+    <title>CyberPie | Admin Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         :root {
             --neon: #00f3ff;
+            --neon-purple: #bc13fe;
             --bg: #05070a;
             --panel: #0f1219;
+            --sidebar: #0a0c12;
             --input-bg: #1a1d26;
             --text: #e0e6ed;
             --danger: #ff2a2a;
+            --success: #00ff88;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -22,10 +27,8 @@
             background: var(--bg);
             color: var(--text);
             height: 100vh;
+            overflow: hidden;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            background-image: radial-gradient(circle at 50% 50%, rgba(0, 243, 255, 0.05) 0%, transparent 50%);
         }
 
         /* --- Login Overlay --- */
@@ -58,7 +61,78 @@
             letter-spacing: 2px;
         }
 
-        input, textarea {
+        /* --- Dashboard Layout --- */
+        #dashboard {
+            display: none; /* Hidden until login */
+            width: 100%;
+            height: 100%;
+            display: flex; /* Flex layout for sidebar + content */
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: var(--sidebar);
+            border-right: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .brand {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        .brand span { color: var(--neon); }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: #8892b0;
+            padding: 15px;
+            text-align: left;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: rgba(0, 243, 255, 0.1);
+            color: var(--neon);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.05);
+        }
+
+        .logout-btn {
+            margin-top: auto;
+            color: var(--danger);
+            border: 1px solid rgba(255, 42, 42, 0.3);
+        }
+        
+        .logout-btn:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            position: relative;
+            background-image: radial-gradient(circle at 90% 10%, rgba(188, 19, 254, 0.05) 0%, transparent 40%);
+        }
+
+        /* Forms & Inputs */
+        input, textarea, select {
             width: 100%;
             padding: 12px;
             margin: 10px 0;
@@ -77,10 +151,10 @@
             box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
         }
 
-        button {
+        .action-btn {
             width: 100%;
             padding: 12px;
-            margin-top: 10px;
+            margin-top: 15px;
             background: var(--neon);
             color: #000;
             border: none;
@@ -93,76 +167,90 @@
             transition: 0.3s;
         }
 
-        button:hover {
+        .action-btn:hover {
             box-shadow: 0 0 20px var(--neon);
             background: #fff;
         }
 
-        .error-msg {
-            color: var(--danger);
-            font-size: 0.9rem;
-            margin-top: 10px;
+        /* --- Views (Tab Content) --- */
+        .view-section {
             display: none;
+            animation: fadeIn 0.4s ease;
         }
-
-        /* --- Admin Dashboard --- */
-        #adminPanel {
-            display: none; /* Hidden by default */
-            width: 100%;
-            max-width: 600px;
-            margin: 20px;
-        }
-
-        .panel-container {
-            background: var(--panel);
-            padding: 30px;
-            border-radius: 15px;
-            border: 1px solid #333;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-        }
-
-        .panel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #333;
-            padding-bottom: 15px;
-        }
-
-        .logout-btn {
-            background: transparent;
-            border: 1px solid var(--danger);
-            color: var(--danger);
-            width: auto;
-            padding: 5px 15px;
-            font-size: 0.8rem;
-        }
-
-        .logout-btn:hover {
-            background: var(--danger);
-            color: #fff;
-            box-shadow: 0 0 15px var(--danger);
-        }
-
-        label {
+        .view-section.active-view {
             display: block;
-            margin-top: 15px;
-            color: #8892b0;
-            font-size: 0.9rem;
         }
 
-        .file-upload {
-            padding: 10px 0;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        #statusMsg {
-            margin-top: 15px;
-            text-align: center;
+        h2.section-title {
+            font-family: 'Orbitron';
+            margin-bottom: 25px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+            color: var(--text);
+        }
+
+        /* Manage Posts List */
+        .post-item {
+            display: flex;
+            align-items: center;
+            background: var(--panel);
+            border: 1px solid #333;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            transition: 0.3s;
+        }
+
+        .post-item:hover {
+            border-color: var(--neon-purple);
+            transform: translateX(5px);
+        }
+
+        .post-thumb {
+            width: 80px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 20px;
+            border: 1px solid #444;
+        }
+
+        .post-info {
+            flex: 1;
+        }
+        .post-info h4 { color: #fff; font-size: 1.1rem; }
+        .post-info span { font-size: 0.8rem; color: #888; }
+
+        .post-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-sm {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
             font-weight: bold;
-            color: var(--neon);
-            opacity: 0;
-            transition: opacity 0.5s;
+            font-family: 'Rajdhani';
+            text-transform: uppercase;
+        }
+
+        .btn-edit { background: #ffaa00; color: #000; }
+        .btn-delete { background: var(--danger); color: #fff; }
+
+        .btn-edit:hover { box-shadow: 0 0 10px #ffaa00; }
+        .btn-delete:hover { box-shadow: 0 0 10px var(--danger); }
+
+        #cancelEditBtn {
+            background: #444;
+            color: #fff;
+            display: none; /* Hidden by default */
         }
     </style>
 </head>
@@ -173,58 +261,81 @@
             <h2>ACCESS REQUIRED</h2>
             <input type="text" id="username" placeholder="Username">
             <input type="password" id="password" placeholder="Password">
-            <button onclick="checkLogin()">Initialize</button>
-            <div id="loginError" class="error-msg">ACCESS DENIED: Invalid Credentials</div>
+            <button class="action-btn" onclick="checkLogin()">Initialize</button>
+            <div id="loginError" style="color:red; margin-top:10px; display:none;">ACCESS DENIED</div>
         </div>
     </div>
 
-    <div id="adminPanel">
-        <div class="panel-container">
-            <div class="panel-header">
-                <h2 style="color:white; font-family:'Orbitron'">ADMIN <span style="color:var(--neon)">CONSOLE</span></h2>
-                <button class="logout-btn" onclick="logout()">LOGOUT</button>
+    <div id="dashboard" style="display:none;"> <div class="sidebar">
+            <div class="brand">CYBER<span>PIE</span></div>
+            
+            <button class="nav-btn active" onclick="switchTab('create')">
+                <i class="fas fa-plus-circle"></i> New Post
+            </button>
+            
+            <button class="nav-btn" onclick="switchTab('manage')">
+                <i class="fas fa-tasks"></i> Manage Posts
+            </button>
+            
+            <button class="nav-btn logout-btn" onclick="logout()">
+                <i class="fas fa-power-off"></i> Logout
+            </button>
+        </div>
+
+        <div class="main-content">
+            
+            <div id="view-create" class="view-section active-view">
+                <h2 class="section-title" id="formTitle">CREATE NEW POST</h2>
+                
+                <form id="postForm">
+                    <input type="hidden" id="editId"> <label>Post Title</label>
+                    <input type="text" id="title" placeholder="e.g. Super Ultra Shader" required>
+
+                    <label>Description</label>
+                    <textarea id="desc" rows="4" placeholder="Brief details about the content..." required></textarea>
+
+                    <label>Thumbnail Image</label>
+                    <input type="file" id="imageInput" accept="image/*" class="file-upload">
+                    <p style="font-size:0.8rem; color:#666;" id="imgNote">Leave empty to keep existing image during edit.</p>
+
+                    <label>Download Link</label>
+                    <input type="url" id="link" placeholder="https://..." required>
+
+                    <label>YouTube Video Link (Optional)</label>
+                    <input type="url" id="video" placeholder="https://youtube.com/...">
+
+                    <div style="display:flex; gap:10px;">
+                        <button type="submit" class="action-btn" id="submitBtn">PUBLISH</button>
+                        <button type="button" class="action-btn" id="cancelEditBtn" onclick="resetForm()">CANCEL EDIT</button>
+                    </div>
+                </form>
             </div>
 
-            <form id="postForm">
-                <label>Post Title</label>
-                <input type="text" id="title" placeholder="e.g. Super Ultra Shader" required>
+            <div id="view-manage" class="view-section">
+                <h2 class="section-title">MANAGE DATABASE</h2>
+                <div id="postsList">
+                    </div>
+            </div>
 
-                <label>Description</label>
-                <textarea id="desc" rows="3" placeholder="Brief details about the content..." required></textarea>
-
-                <label>Thumbnail Image (Max 1MB recommended)</label>
-                <input type="file" id="imageInput" accept="image/*" class="file-upload" required>
-
-                <label>Download Link (Linkvertise/Mediafire)</label>
-                <input type="url" id="link" placeholder="https://..." required>
-
-                <label>YouTube Video Link (Optional)</label>
-                <input type="url" id="video" placeholder="https://youtube.com/...">
-
-                <button type="submit">PUBLISH TO MAINFRAME</button>
-            </form>
-
-            <div id="statusMsg">DATA UPLOADED SUCCESSFULLY</div>
         </div>
     </div>
 
     <script>
-        // --- 1. Security & Login Logic ---
+        // --- 1. LOGIN SYSTEM ---
         function checkLogin() {
             const u = document.getElementById('username').value;
             const p = document.getElementById('password').value;
-            const err = document.getElementById('loginError');
-
             if (u === 'admin' && p === 'saggu12@') {
-                // Success
-                document.getElementById('loginOverlay').style.display = 'none';
-                document.getElementById('adminPanel').style.display = 'block';
                 sessionStorage.setItem('cyberAuth', 'true');
+                showDashboard();
             } else {
-                // Fail
-                err.style.display = 'block';
-                document.getElementById('password').value = '';
+                document.getElementById('loginError').style.display = 'block';
             }
+        }
+
+        function showDashboard() {
+            document.getElementById('loginOverlay').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'flex';
         }
 
         function logout() {
@@ -232,71 +343,172 @@
             location.reload();
         }
 
-        // Auto-login if session exists (prevents logout on refresh)
         if (sessionStorage.getItem('cyberAuth') === 'true') {
-            document.getElementById('loginOverlay').style.display = 'none';
-            document.getElementById('adminPanel').style.display = 'block';
+            showDashboard();
         }
 
-        // --- 2. Post Creation Logic ---
+        // --- 2. NAVIGATION ---
+        function switchTab(tab) {
+            // Update Sidebar Active State
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            event.currentTarget.classList.add('active'); // Needs event passed or handle manually
+
+            // Show Section
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active-view'));
+            document.getElementById('view-' + tab).classList.add('active-view');
+
+            if (tab === 'manage') {
+                loadManageList();
+            }
+        }
+
+        // Fix for onclick logic above not passing 'this' correctly in inline HTML sometimes
+        // Attaching click listeners cleanly:
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if(!this.classList.contains('logout-btn')) {
+                    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                }
+            });
+        });
+
+
+        // --- 3. DATA HANDLING (CRUD) ---
+        let isEditing = false;
+        let originalImageBase64 = ""; // Stores old image during edit
+
         const form = document.getElementById('postForm');
-        
+
         form.addEventListener('submit', function(e) {
             e.preventDefault();
-
-            // Collect Data
+            
+            const id = document.getElementById('editId').value;
             const title = document.getElementById('title').value;
             const desc = document.getElementById('desc').value;
             const link = document.getElementById('link').value;
             const video = document.getElementById('video').value;
             const fileInput = document.getElementById('imageInput');
 
-            // Image Processing (File -> Base64)
-            if (fileInput.files && fileInput.files[0]) {
+            // Handle Image: New upload OR Keep old
+            if (fileInput.files.length > 0) {
                 const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    const base64Image = e.target.result;
-
-                    // Create Post Object
-                    const newPost = {
-                        id: Date.now(),
-                        title: title,
-                        desc: desc,
-                        link: link,
-                        video: video,
-                        image: base64Image
-                    };
-
-                    savePost(newPost);
+                reader.onload = function(evt) {
+                    saveToStorage(id, title, desc, link, video, evt.target.result);
                 };
-
                 reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                // No new image selected
+                if (isEditing) {
+                    saveToStorage(id, title, desc, link, video, originalImageBase64);
+                } else {
+                    alert("Please select an image for new posts!");
+                }
             }
         });
 
-        function savePost(post) {
-            // Get existing posts
+        function saveToStorage(id, title, desc, link, video, image) {
             let posts = JSON.parse(localStorage.getItem('cyberpie_posts')) || [];
+
+            if (isEditing && id) {
+                // UPDATE Existing
+                const index = posts.findIndex(p => p.id == id);
+                if (index !== -1) {
+                    posts[index] = { id: parseInt(id), title, desc, link, video, image };
+                }
+            } else {
+                // CREATE New
+                const newPost = { id: Date.now(), title, desc, link, video, image };
+                posts.push(newPost);
+            }
+
+            localStorage.setItem('cyberpie_posts', JSON.stringify(posts));
+            resetForm();
+            alert("Success! Database Updated.");
             
-            // Add new post
-            posts.push(post);
+            // If we were on manage tab, refresh it? Usually we send user to manage tab or reset form.
+            // Let's stay on form but reset it.
+        }
+
+        function resetForm() {
+            document.getElementById('postForm').reset();
+            document.getElementById('editId').value = "";
+            document.getElementById('formTitle').innerText = "CREATE NEW POST";
+            document.getElementById('submitBtn').innerText = "PUBLISH";
+            document.getElementById('cancelEditBtn').style.display = 'none';
+            document.getElementById('imgNote').innerText = "Leave empty to keep existing image during edit.";
+            isEditing = false;
+            originalImageBase64 = "";
+        }
+
+        // --- 4. MANAGE LIST LOGIC ---
+        function loadManageList() {
+            const listContainer = document.getElementById('postsList');
+            const posts = JSON.parse(localStorage.getItem('cyberpie_posts')) || [];
             
-            // Save back to LocalStorage
-            try {
+            listContainer.innerHTML = ""; // Clear list
+
+            if (posts.length === 0) {
+                listContainer.innerHTML = "<p style='text-align:center; color:#555;'>No posts found.</p>";
+                return;
+            }
+
+            // Reverse to show newest first
+            posts.slice().reverse().forEach(post => {
+                const item = document.createElement('div');
+                item.className = 'post-item';
+                item.innerHTML = `
+                    <img src="${post.image}" class="post-thumb">
+                    <div class="post-info">
+                        <h4>${post.title}</h4>
+                        <span>ID: ${post.id}</span>
+                    </div>
+                    <div class="post-actions">
+                        <button class="btn-sm btn-edit" onclick="startEdit(${post.id})">Edit</button>
+                        <button class="btn-sm btn-delete" onclick="deletePost(${post.id})">Delete</button>
+                    </div>
+                `;
+                listContainer.appendChild(item);
+            });
+        }
+
+        function deletePost(id) {
+            if(confirm("Are you sure you want to delete this post?")) {
+                let posts = JSON.parse(localStorage.getItem('cyberpie_posts')) || [];
+                posts = posts.filter(p => p.id !== id);
                 localStorage.setItem('cyberpie_posts', JSON.stringify(posts));
+                loadManageList(); // Refresh list
+            }
+        }
+
+        function startEdit(id) {
+            const posts = JSON.parse(localStorage.getItem('cyberpie_posts')) || [];
+            const post = posts.find(p => p.id === id);
+
+            if (post) {
+                // Switch to Form View
+                document.querySelector('.nav-btn.active').classList.remove('active');
+                document.querySelectorAll('.nav-btn')[0].classList.add('active'); // Highlight "New Post" (or "Edit")
                 
-                // Success UI Feedback
-                const msg = document.getElementById('statusMsg');
-                msg.style.opacity = '1';
-                form.reset();
+                document.getElementById('view-manage').classList.remove('active-view');
+                document.getElementById('view-create').classList.add('active-view');
+
+                // Fill Data
+                document.getElementById('editId').value = post.id;
+                document.getElementById('title').value = post.title;
+                document.getElementById('desc').value = post.desc;
+                document.getElementById('link').value = post.link;
+                document.getElementById('video').value = post.video || "";
                 
-                setTimeout(() => {
-                    msg.style.opacity = '0';
-                }, 3000);
-            } catch (err) {
-                alert("Storage Full! Try using a smaller image.");
-                console.error(err);
+                // Set Global State
+                isEditing = true;
+                originalImageBase64 = post.image;
+
+                // UI Changes
+                document.getElementById('formTitle').innerText = "EDIT POST: " + post.title;
+                document.getElementById('submitBtn').innerText = "UPDATE POST";
+                document.getElementById('cancelEditBtn').style.display = 'inline-block';
+                document.getElementById('imgNote').innerText = "Current image loaded. Upload new one only to change it.";
             }
         }
     </script>
