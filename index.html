@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Gaming Downloads</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Linkvertise Full Script API -->
+  <script src="https://publisher.linkvertise.com/cdn/linkvertise.js"></script>
+  <script>
+    linkvertise(1438453, {
+      whitelist: [],
+      blacklist: [""]
+    });
+  </script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f0f8ff;
+      color: #222;
+    }
+
+    header {
+      background: #4da6ff;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .post {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .post h1 {
+      color: #3399ff;
+    }
+
+    .download-btn {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 12px 25px;
+      background: #3399ff;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 18px;
+    }
+
+    .download-btn:hover {
+      background: #1e7fd9;
+    }
+
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 14px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  🎮 Gaming & Server Downloads
+</header>
+
+<div class="container">
+  <div class="post">
+    <h1>Free Gaming Tool v1.0</h1>
+    <p>
+      Yeh ek sample post hai. Yahan tum apna gaming ya server related
+      description likh sakte ho. Images bhi add kar sakte ho.
+    </p>
+
+    <!-- Download Button (Linkvertise automatically wrap karega) -->
+    <a class="download-btn" href="https://example.com/your-file.zip">
+      ⬇ Download Now
+    </a>
+  </div>
+
+  <!-- COMMENTS (Disqus) -->
+  <div id="disqus_thread" style="margin-top:40px;"></div>
+  <script>
+    var disqus_config = function () {
+      this.page.url = window.location.href;
+      this.page.identifier = "post-1";
+    };
+    (function() {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://YOUR-DISQUS-NAME.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+</div>
+
+<footer>
+  © 2026 | All Rights Reserved
+</footer>
+
+</body>
+</html>
