@@ -151,6 +151,30 @@
         .grid-overlay { position: absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:none; justify-content:center; align-items:center; color:#fff; font-weight:bold; gap:20px; backdrop-filter: blur(2px); }
         .grid-post-wrap:hover .grid-overlay { display: flex; }
 
+        /* Empty States */
+        .empty-state { text-align: center; padding: 40px; grid-column: 1 / -1; color: var(--text-grey); }
+        .empty-icon { font-size: 40px; margin-bottom: 15px; color: #333; border: 2px solid #333; padding: 20px; border-radius: 50%; }
+
+        /* --- MODALS --- */
+        .modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.85); z-index: 2000; display: none; 
+            align-items: center; justify-content: center; backdrop-filter: blur(8px);
+        }
+        .modal-box { 
+            background: #0f0f0f; padding: 30px; width: 400px; border-radius: 15px; 
+            border: 1px solid var(--primary); text-align: center;
+            box-shadow: 0 0 40px rgba(0, 243, 255, 0.15);
+        }
+        .modal-title { font-family: 'Orbitron'; color: var(--primary); font-size: 20px; margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 15px; }
+        .edit-input-group { margin-bottom: 15px; text-align: left; }
+        .edit-label { font-size: 12px; color: var(--text-grey); margin-bottom: 5px; display: block; margin-left: 5px; }
+        
+        .settings-list { list-style: none; padding: 0; text-align: left; }
+        .settings-list li { padding: 15px; border-bottom: 1px solid #333; cursor: pointer; transition: 0.2s; color: #fff; }
+        .settings-list li:hover { background: #1a1a1a; padding-left: 20px; color: var(--primary); }
+        .settings-list li:last-child { border-bottom: none; color: #ff3040; }
+
         /* --- MOBILE --- */
         .mobile-nav { display: none; }
         @media (max-width: 800px) {
@@ -167,21 +191,6 @@
             .p-bio-section { margin-bottom: 15px; order: 1; }
             .profile-grid { gap: 3px; }
         }
-
-        /* --- FUTURISTIC MODAL --- */
-        .modal-overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.85); z-index: 2000; display: none; 
-            align-items: center; justify-content: center; backdrop-filter: blur(8px);
-        }
-        .modal-box { 
-            background: #0f0f0f; padding: 30px; width: 400px; border-radius: 15px; 
-            border: 1px solid var(--primary); text-align: center;
-            box-shadow: 0 0 40px rgba(0, 243, 255, 0.15);
-        }
-        .modal-title { font-family: 'Orbitron'; color: var(--primary); font-size: 20px; margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 15px; }
-        .edit-input-group { margin-bottom: 15px; text-align: left; }
-        .edit-label { font-size: 12px; color: var(--text-grey); margin-bottom: 5px; display: block; margin-left: 5px; }
     </style>
 </head>
 <body>
@@ -216,7 +225,7 @@
                 <div class="nav-item" onclick="nav('search', this)"><i class="fas fa-search"></i> <span>Search</span></div>
                 <div class="nav-item" onclick="nav('messages', this)"><i class="fas fa-envelope"></i> <span>Messages</span></div>
                 <div class="nav-item" onclick="nav('profile', this)"><i class="fas fa-user"></i> <span>Profile</span></div>
-                <div class="nav-item" onclick="logout()" style="margin-top:auto;"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></div>
+                <div class="nav-item" onclick="openSettings()" style="margin-top:auto;"><i class="fas fa-bars"></i> <span>More</span></div>
             </div>
 
             <div class="content-area">
@@ -254,7 +263,7 @@
                                 <h2 id="p-username" class="p-username">username</h2>
                                 <button class="btn-insta-edit" onclick="openEditModal()">Edit Profile</button>
                                 <button class="btn-insta-edit" style="margin-left: 8px;">Archive</button>
-                                <i class="fas fa-cog" style="margin-left: 15px; font-size: 20px; cursor: pointer;"></i>
+                                <i class="fas fa-cog" style="margin-left: 15px; font-size: 20px; cursor: pointer;" onclick="openSettings()"></i>
                             </div>
                             <ul class="p-stats-row">
                                 <li><span class="stat-num" id="p-post-count">0</span> posts</li>
@@ -269,9 +278,9 @@
                     </div>
                     
                     <div class="profile-tabs">
-                        <div class="tab-item active"><i class="fas fa-th"></i> POSTS</div>
-                        <div class="tab-item"><i class="fas fa-bookmark"></i> SAVED</div>
-                        <div class="tab-item"><i class="fas fa-user-tag"></i> TAGGED</div>
+                        <div class="tab-item active" onclick="switchProfileTab('posts')" id="tab-posts"><i class="fas fa-th"></i> POSTS</div>
+                        <div class="tab-item" onclick="switchProfileTab('saved')" id="tab-saved"><i class="fas fa-bookmark"></i> SAVED</div>
+                        <div class="tab-item" onclick="switchProfileTab('tagged')" id="tab-tagged"><i class="fas fa-user-tag"></i> TAGGED</div>
                     </div>
 
                     <div class="profile-grid" id="p-grid"></div>
@@ -317,6 +326,20 @@
         </div>
     </div>
 
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal-box" style="width: 300px; padding: 0;">
+            <ul class="settings-list">
+                <li>Apps and Websites</li>
+                <li>QR Code</li>
+                <li>Notifications</li>
+                <li>Settings and privacy</li>
+                <li>Supervision</li>
+                <li onclick="logout()">Log Out</li>
+                <li style="color:#fff; border-top: 5px solid #000;" onclick="document.getElementById('settings-modal').style.display='none'">Cancel</li>
+            </ul>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
@@ -336,6 +359,7 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         let userNow = null;
+        let currentProfileTab = 'posts';
 
         // AUTH
         window.login = async () => { try { await signInWithEmailAndPassword(auth, document.getElementById('l-email').value, document.getElementById('l-pass').value); } catch(e) { alert(e.message); } };
@@ -384,7 +408,18 @@
                     c.innerHTML+=`<div class="post-card"><div class="post-header"><img src="${p.avatar}" class="post-avatar"><span style="font-weight:600">${p.user}</span></div><img src="${p.img}" class="post-img" ondblclick="toggleLike('${d.id}')"><div class="post-actions"><i class="fas fa-heart ${l}" style="cursor:pointer;" onclick="toggleLike('${d.id}')"></i></div><div><b>${p.user}</b> ${p.cap}</div></div>`;
                 });
             });
-            // MY GRID
+            // MY GRID (Initial Load)
+            loadUserPosts();
+
+            // CHAT
+            onSnapshot(query(collection(db, "chats"), orderBy("time", "asc")), (snap) => {
+                const l=document.getElementById('msg-list'); l.innerHTML='';
+                snap.forEach(d=>{const m=d.data(); const cls=m.uid===userNow.uid?'msg-mine':'msg-other'; l.innerHTML+=`<div class="msg-bubble ${cls}"><b>${m.user}:</b> ${m.txt}</div>`;});
+                l.scrollTop=l.scrollHeight;
+            });
+        }
+
+        function loadUserPosts() {
             onSnapshot(query(collection(db, "posts"), where("uid", "==", userNow.uid)), (snap) => {
                 const g=document.getElementById('p-grid'); g.innerHTML=''; document.getElementById('p-post-count').innerText=snap.size;
                 snap.forEach(d=>{
@@ -397,12 +432,6 @@
                     </div>`;
                 });
             });
-            // CHAT
-            onSnapshot(query(collection(db, "chats"), orderBy("time", "asc")), (snap) => {
-                const l=document.getElementById('msg-list'); l.innerHTML='';
-                snap.forEach(d=>{const m=d.data(); const cls=m.uid===userNow.uid?'msg-mine':'msg-other'; l.innerHTML+=`<div class="msg-bubble ${cls}"><b>${m.user}:</b> ${m.txt}</div>`;});
-                l.scrollTop=l.scrollHeight;
-            });
         }
 
         // --- SEARCH & FOLLOW ---
@@ -410,25 +439,34 @@
             const val = document.getElementById('search-input').value.toLowerCase();
             const res = document.getElementById('search-results');
             if(val.length < 2) return;
-            const q = query(collection(db, "users"), where("username", ">=", val), where("username", "<=", val+"\uf8ff"));
-            const snap = await getDocs(q);
+            
+            // IMPROVED SEARCH (Client Side Filter for reliability)
+            const allUsersSnap = await getDocs(collection(db, "users"));
             res.innerHTML = '';
-            if(snap.empty) { res.innerHTML='<div style="text-align:center;margin-top:20px;color:#555">No agent found</div>'; return;}
-            snap.forEach(d => {
+            let found = false;
+
+            allUsersSnap.forEach(d => {
                 const u = d.data();
                 if(u.uid === userNow.uid) return;
-                res.innerHTML += `
-                <div class="user-result">
-                    <div class="ur-left">
-                        <img src="${u.photo}" class="ur-pic">
-                        <div><div style="font-weight:bold">${u.username}</div><div style="font-size:12px;color:#777">${u.name}</div></div>
-                    </div>
-                    <div class="ur-btn-group">
-                        <button class="btn-follow" onclick="follow('${u.uid}')">Follow</button>
-                        <button class="btn-msg" onclick="nav('messages')">Msg</button>
-                    </div>
-                </div>`;
+                
+                // Flexible match
+                if (u.username.toLowerCase().includes(val) || u.name.toLowerCase().includes(val)) {
+                    found = true;
+                    res.innerHTML += `
+                    <div class="user-result">
+                        <div class="ur-left">
+                            <img src="${u.photo}" class="ur-pic">
+                            <div><div style="font-weight:bold">${u.username}</div><div style="font-size:12px;color:#777">${u.name}</div></div>
+                        </div>
+                        <div class="ur-btn-group">
+                            <button class="btn-follow" onclick="follow('${u.uid}')">Follow</button>
+                            <button class="btn-msg" onclick="nav('messages')">Msg</button>
+                        </div>
+                    </div>`;
+                }
             });
+
+            if(!found) res.innerHTML='<div style="text-align:center;margin-top:20px;color:#555">No agent found</div>';
         };
 
         window.follow = async (targetId) => {
@@ -439,6 +477,37 @@
             } catch(e) { alert("Error: "+e.message); }
         };
 
+        // --- PROFILE TABS LOGIC ---
+        window.switchProfileTab = (tab) => {
+            // Update UI
+            document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+            document.getElementById('tab-' + tab).classList.add('active');
+            
+            const grid = document.getElementById('p-grid');
+            grid.innerHTML = ""; // Clear current view
+
+            if (tab === 'posts') {
+                loadUserPosts();
+            } else if (tab === 'saved') {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon"><i class="fas fa-bookmark"></i></div>
+                        <h2>Save</h2>
+                        <p>Save photos and videos that you want to see again.</p>
+                    </div>`;
+            } else if (tab === 'tagged') {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon"><i class="fas fa-user-tag"></i></div>
+                        <h2>Photos of you</h2>
+                        <p>When people tag you in photos, they'll appear here.</p>
+                    </div>`;
+            }
+        };
+
+        // --- SETTINGS LOGIC ---
+        window.openSettings = () => document.getElementById('settings-modal').style.display = 'flex';
+
         // --- OTHER FUNCTIONS ---
         window.toggleLike = async(pid)=>{const r=doc(db,"posts",pid);const s=await getDoc(r);const l=s.data().likes||[];if(l.includes(userNow.uid)){await updateDoc(r,{likes:arrayRemove(userNow.uid)})}else{await updateDoc(r,{likes:arrayUnion(userNow.uid)})}};
         window.sendMsg = async()=>{const i=document.getElementById('msg-input');if(!i.value)return;await addDoc(collection(db,"chats"),{uid:userNow.uid,user:userNow.displayName,txt:i.value,time:serverTimestamp()});i.value=''};
@@ -446,6 +515,7 @@
         let newAvi=null;
         window.openEditModal=()=>document.getElementById('edit-modal').style.display='flex';
         window.previewAvi=(el)=>{const f=el.files[0];const r=new FileReader();r.onload=(e)=>{const i=new Image();i.src=e.target.result;i.onload=()=>{const c=document.createElement('canvas');c.width=150;c.height=150;c.getContext('2d').drawImage(i,0,0,150,150);newAvi=c.toDataURL('image/jpeg',0.8);document.getElementById('edit-preview').src=newAvi;}};r.readAsDataURL(f);};
+        
         window.saveProfile=async()=>{
             const n=document.getElementById('edit-name').value;
             const b=document.getElementById('edit-bio').value;
