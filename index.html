@@ -3,263 +3,272 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CyberHub | Nexus</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    <title>CyberHub | The Grid</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
             --primary: #00f3ff;
-            --primary-glow: rgba(0, 243, 255, 0.3);
-            --bg-dark: #05070a;
-            --glass-panel: rgba(20, 25, 35, 0.7);
-            --border-color: rgba(255, 255, 255, 0.1);
-            --text-main: #ffffff;
-            --text-muted: #94a3b8;
-            --danger: #ff3344;
-            --success: #00ff99;
+            --bg: #000000;
+            --surface: #0f0f0f;
+            --border: #262626;
+            --text: #f5f5f5;
+            --text-grey: #a8a8a8;
+            --btn-grey: #363636;
+            --danger: #ff3040;
+            --success: #00ff88;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
 
         body {
-            background-color: var(--bg-dark);
-            background-image: radial-gradient(circle at 50% 0%, #1a2035 0%, #05070a 60%);
-            color: var(--text-main);
-            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
             height: 100vh;
-            overflow: hidden; /* Prevents body scroll, handles inside elements */
             display: flex;
             flex-direction: column;
         }
 
-        /* --- UTILITIES --- */
+        /* UTILS */
         .hidden { display: none !important; }
-        .cyber-font { font-family: 'Orbitron', sans-serif; letter-spacing: 2px; }
-        .btn { cursor: pointer; border: none; transition: 0.2s; border-radius: 8px; font-weight: 600; }
+        .cyber-font { font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
+        .btn { cursor: pointer; border: none; font-weight: 600; transition: 0.2s; border-radius: 4px; }
         .clickable { cursor: pointer; }
-
-        /* --- LOADER --- */
+        
+        /* LOADER */
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 9999; display: flex; align-items: center; justify-content: center;
         }
         .spinner {
-            width: 50px; height: 50px; border: 3px solid rgba(0,243,255,0.1);
-            border-top: 3px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite;
-            box-shadow: 0 0 15px var(--primary-glow);
+            width: 40px; height: 40px; border: 3px solid #333; 
+            border-top: 3px solid var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite;
         }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* --- AUTH SCREEN --- */
+        /* AUTH */
         #auth-view {
-            width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
-            background: #000; position: absolute; z-index: 1000;
+            width: 100%; height: 100vh; display: flex; align-items: center; justify-content: center;
+            flex-direction: column; background: #000;
         }
-        .auth-container {
-            width: 90%; max-width: 400px; padding: 40px;
-            background: rgba(255,255,255,0.05); border: 1px solid var(--border-color);
-            border-radius: 20px; text-align: center; backdrop-filter: blur(20px);
-        }
-        .auth-input {
-            width: 100%; padding: 15px; margin-bottom: 15px; background: rgba(0,0,0,0.5);
-            border: 1px solid var(--border-color); color: #fff; border-radius: 10px; font-size: 16px;
-        }
-        .auth-input:focus { border-color: var(--primary); box-shadow: 0 0 10px var(--primary-glow); }
-        .auth-btn {
-            width: 100%; padding: 15px; background: var(--primary); color: #000;
-            font-family: 'Orbitron'; font-weight: 700; font-size: 16px; margin-top: 10px;
-        }
-        .link { color: var(--primary); margin-top: 20px; display: block; font-size: 14px; cursor: pointer; text-decoration: underline; }
+        .auth-box { width: 350px; padding: 40px; border: 1px solid var(--border); text-align: center; background: var(--surface); }
+        .auth-input { width: 100%; padding: 12px; background: #000; border: 1px solid var(--border); color: #fff; margin-bottom: 10px; border-radius: 4px; }
+        .auth-btn { width: 100%; padding: 10px; background: var(--primary); color: #000; margin-top: 10px; font-weight: bold; }
+        .link { color: var(--primary); cursor: pointer; margin-top: 10px; display: inline-block; font-size: 0.9rem; }
 
-        /* --- MAIN LAYOUT (CSS GRID) --- */
-        #app-view { width: 100%; height: 100%; display: none; }
-        .main-layout {
-            display: grid;
-            grid-template-columns: 280px 1fr 320px; /* Fixed Sidebar, Flexible Content, Fixed Sidebar */
-            height: 100vh;
-            width: 100%;
-            max-width: 1800px;
-            margin: 0 auto;
-        }
+        /* LAYOUT */
+        #app-view { display: none; height: 100vh; }
+        .main-layout { display: grid; grid-template-columns: 250px 1fr 320px; max-width: 1400px; margin: 0 auto; height: 100%; }
 
-        /* --- LEFT SIDEBAR --- */
-        .sidebar {
-            background: rgba(10, 12, 16, 0.8); border-right: 1px solid var(--border-color);
-            padding: 30px; display: flex; flex-direction: column; backdrop-filter: blur(10px);
-        }
-        .logo {
-            font-family: 'Orbitron'; font-size: 28px; color: #fff; margin-bottom: 50px;
-            text-shadow: 0 0 10px var(--primary);
-        }
-        .nav-item {
-            display: flex; align-items: center; gap: 15px; padding: 15px;
-            color: var(--text-muted); border-radius: 12px; margin-bottom: 5px;
-            font-size: 16px; font-weight: 500;
-        }
-        .nav-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
-        .nav-item.active { background: rgba(0, 243, 255, 0.15); color: var(--primary); border: 1px solid rgba(0,243,255,0.1); }
-        .nav-item i { width: 25px; text-align: center; font-size: 20px; }
+        /* SIDEBAR */
+        .sidebar { border-right: 1px solid var(--border); padding: 40px 20px; display: flex; flex-direction: column; height: 100%; }
+        .logo { font-size: 1.8rem; color: var(--primary); margin-bottom: 50px; padding-left: 10px; }
+        .nav-item { display: flex; align-items: center; gap: 15px; padding: 15px; border-radius: 8px; color: var(--text); cursor: pointer; margin-bottom: 8px; }
+        .nav-item:hover { background: rgba(0, 243, 255, 0.1); color: var(--primary); }
+        .nav-item.active { font-weight: 700; color: var(--primary); }
+        .nav-item i { font-size: 22px; width: 30px; text-align: center; }
 
-        /* --- MIDDLE CONTENT AREA --- */
-        .content-area {
-            position: relative;
-            overflow-y: auto; /* Scroll only inside middle area */
-            display: flex; flex-direction: column;
-            background: rgba(0,0,0,0.2);
+        /* CONTENT */
+        .content-area { overflow-y: scroll; position: relative; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+        
+        /* HOME HERO */
+        .hero-section {
+            text-align: center; padding: 60px 20px 40px 20px; border-bottom: 1px solid var(--border); margin-bottom: 20px;
+            background: linear-gradient(180deg, rgba(0, 243, 255, 0.05) 0%, rgba(0,0,0,0) 100%);
         }
-
-        /* Hero Header */
-        .hero-header {
-            text-align: center; padding: 60px 20px; border-bottom: 1px solid var(--border-color);
-            background: linear-gradient(180deg, rgba(0,243,255,0.05) 0%, transparent 100%);
-        }
-        .hero-title { font-family: 'Orbitron'; font-size: 40px; color: #fff; margin-bottom: 5px; }
-        .hero-sub { color: var(--primary); font-size: 14px; letter-spacing: 3px; font-weight: 600; }
-
-        /* Agent Grid (Home) */
-        .grid-container { padding: 30px; }
-        .agent-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Responsive Grid */
-            gap: 20px;
-        }
+        .hero-title { font-family: 'Orbitron', sans-serif; font-size: 2.5rem; color: var(--primary); text-shadow: 0 0 20px rgba(0, 243, 255, 0.4); margin-bottom: 10px; font-weight: 900; letter-spacing: 2px; }
+        .hero-sub { color: var(--text-grey); font-size: 1rem; letter-spacing: 1.5px; text-transform: uppercase; }
+        
+        /* USER GRID */
+        .feed-container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        .agent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
         .agent-card {
-            background: var(--glass-panel); border: 1px solid var(--border-color);
-            border-radius: 16px; padding: 25px; text-align: center;
-            display: flex; flex-direction: column; align-items: center;
-            transition: 0.3s;
+            background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px;
+            text-align: center; transition: 0.3s; cursor: pointer;
         }
-        .agent-card:hover { border-color: var(--primary); transform: translateY(-5px); }
-        .agent-img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 15px; border: 2px solid #333; }
-        .agent-name { font-weight: 700; color: #fff; font-size: 16px; margin-bottom: 2px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
-        .agent-user { color: var(--text-muted); font-size: 13px; margin-bottom: 15px; }
-        .agent-btn {
-            background: transparent; border: 1px solid var(--primary); color: var(--primary);
-            padding: 8px 0; width: 100%; border-radius: 6px; font-size: 12px; font-weight: 700;
-        }
+        .agent-card:hover { border-color: var(--primary); transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0, 243, 255, 0.1); }
+        .agent-card img { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border); margin-bottom: 10px; }
+        .agent-name { font-weight: bold; color: #fff; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 2px; }
+        .agent-user { color: var(--text-grey); font-size: 12px; margin-bottom: 15px; display: block; }
+        .agent-btn { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 5px 15px; font-size: 12px; width: 100%; border-radius: 4px; transition: 0.2s; }
         .agent-btn:hover { background: var(--primary); color: #000; }
 
-        /* --- RIGHT SIDEBAR --- */
-        .right-sidebar {
-            background: rgba(10, 12, 16, 0.6); border-left: 1px solid var(--border-color);
-            padding: 30px 20px; overflow-y: auto;
-        }
-        .section-title { font-size: 12px; color: var(--text-muted); letter-spacing: 1px; font-weight: 700; margin-bottom: 20px; }
-        .user-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-        .u-info { display: flex; align-items: center; gap: 12px; cursor: pointer; }
-        .u-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-        .u-btn { color: var(--primary); font-size: 12px; font-weight: 700; background: none; border: none; }
-
-        /* --- MESSAGES VIEW (Fixed Layout) --- */
-        #view-messages { height: 100%; display: grid; grid-template-columns: 300px 1fr; }
-        .msg-list-panel { border-right: 1px solid var(--border-color); display: flex; flex-direction: column; background: rgba(0,0,0,0.3); }
-        .msg-header { padding: 20px; font-family: 'Orbitron'; font-size: 20px; border-bottom: 1px solid var(--border-color); }
-        .contacts-scroll { flex: 1; overflow-y: auto; }
-        .contact-item { padding: 15px 20px; display: flex; align-items: center; gap: 15px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.03); transition: 0.2s; position: relative;}
-        .contact-item:hover { background: rgba(255,255,255,0.05); }
-        .contact-item img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; }
-        .del-btn { position: absolute; right: 15px; color: #555; display: none; font-size: 14px; }
-        .contact-item:hover .del-btn { display: block; color: var(--danger); }
-
-        .chat-area { display: flex; flex-direction: column; background: #000; position: relative; }
-        .chat-top-bar { 
-            height: 70px; padding: 0 25px; border-bottom: 1px solid var(--border-color); 
-            display: flex; align-items: center; gap: 15px; background: rgba(20,25,35,0.9);
-        }
-        .chat-feed { 
-            flex: 1; overflow-y: auto; padding: 25px; display: flex; flex-direction: column; gap: 15px; 
-            background: radial-gradient(circle, rgba(0,243,255,0.02) 0%, transparent 70%);
-        }
-        .msg-bubble { max-width: 70%; padding: 12px 18px; border-radius: 18px; font-size: 15px; line-height: 1.5; position: relative; }
-        .msg-in { align-self: flex-start; background: #1f2937; color: #fff; border-bottom-left-radius: 4px; }
-        .msg-out { align-self: flex-end; background: var(--primary); color: #000; border-bottom-right-radius: 4px; font-weight: 500; }
-        .msg-img { max-width: 250px; border-radius: 10px; margin-top: 5px; cursor: pointer; }
-        .msg-meta { font-size: 10px; opacity: 0.7; text-align: right; margin-top: 5px; display: block; }
-
-        .chat-input-bar { 
-            padding: 20px; background: #0f1219; border-top: 1px solid var(--border-color); 
-            display: flex; align-items: center; gap: 15px; 
-        }
-        .chat-field { 
-            flex: 1; padding: 12px 20px; border-radius: 50px; background: #1a1d26; border: 1px solid var(--border-color); 
-            color: #fff; font-size: 15px; 
-        }
-        .send-btn { 
-            width: 45px; height: 45px; border-radius: 50%; background: var(--primary); 
-            display: flex; align-items: center; justify-content: center; font-size: 18px; color: #000;
-        }
-        .blocked-banner { width: 100%; padding: 15px; background: #2a0000; color: var(--danger); text-align: center; font-weight: bold; display: none; }
-        .pending-banner { width: 100%; padding: 15px; background: #1a1d26; color: #aaa; text-align: center; font-size: 13px; display: none; }
-
-        /* --- PROFILE VIEW --- */
-        #view-profile { padding: 40px; max-width: 800px; margin: 0 auto; }
-        .profile-head { display: flex; align-items: center; gap: 40px; margin-bottom: 40px; }
-        .profile-pic { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 4px solid var(--bg-dark); outline: 3px solid var(--primary); }
-        .stats { display: flex; gap: 40px; list-style: none; font-size: 18px; margin: 20px 0; }
-        .stat-val { font-weight: 700; color: #fff; cursor: pointer; }
-        .stat-val:hover { color: var(--primary); }
-        .action-btn { padding: 8px 24px; border-radius: 8px; font-weight: 600; font-size: 14px; }
-        .btn-blue { background: var(--primary); color: #000; }
-        .btn-grey { background: rgba(255,255,255,0.1); color: #fff; }
-
-        /* --- NOTIFICATIONS --- */
-        .notif-card { 
-            display: flex; align-items: center; gap: 15px; padding: 15px; background: rgba(255,255,255,0.03); 
-            border-radius: 10px; margin-bottom: 10px; border: 1px solid transparent; transition: 0.2s;
-        }
-        .notif-card:hover { border-color: var(--primary); background: rgba(255,255,255,0.05); }
-        .notif-img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; }
-        .btn-xs { padding: 5px 12px; font-size: 11px; border-radius: 4px; margin-right: 5px; font-weight: bold; }
-
-        /* --- SEARCH --- */
-        .search-bar { 
-            width: 100%; padding: 18px 25px; border-radius: 50px; background: rgba(255,255,255,0.05); 
-            border: 1px solid var(--border-color); color: #fff; font-size: 16px; margin-bottom: 30px; 
-        }
-        .search-bar:focus { border-color: var(--primary); }
-
-        /* --- MODALS --- */
-        .modal-wrap { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); 
-            display: none; align-items: center; justify-content: center; z-index: 2000; backdrop-filter: blur(5px);
-        }
-        .modal-content { background: #111; padding: 30px; border-radius: 20px; border: 1px solid var(--border-color); width: 400px; text-align: center; }
+        /* SEARCH */
+        #view-search { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
+        .search-input { width: 100%; padding: 15px 20px; background: var(--surface); border: 1px solid var(--border); color: #fff; border-radius: 30px; font-size: 16px; outline: none; margin-bottom: 20px; }
+        .search-input:focus { border-color: var(--primary); }
+        .user-result { display: flex; align-items: center; justify-content: space-between; padding: 15px; border-bottom: 1px solid var(--border); }
         
-        /* --- MOBILE RESPONSIVE --- */
-        .mobile-nav { display: none; }
-        .back-btn { display: none; font-size: 20px; color: #fff; }
+        /* NOTIFICATIONS */
+        #view-notify { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .notif-header { font-family: 'Orbitron'; font-size: 1.5rem; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; color: var(--primary); }
+        .notif-item { display: flex; align-items: center; gap: 15px; padding: 15px; border-bottom: 1px solid #1a1a1a; transition: 0.2s; }
+        .notif-item:hover { background: #111; }
+        .notif-pic { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); }
+        .notif-content { flex: 1; }
+        .notif-text { font-size: 14px; color: #fff; margin-bottom: 5px; }
+        .notif-highlight { color: var(--primary); font-weight: bold; }
+        .notif-actions { display: flex; gap: 10px; }
+        .btn-req-accept { background: var(--success); color: #000; border: none; padding: 5px 15px; font-size: 12px; font-weight: bold; border-radius: 4px; cursor: pointer;}
+        .btn-req-deny { background: var(--danger); color: #fff; border: none; padding: 5px 15px; font-size: 12px; font-weight: bold; border-radius: 4px; cursor: pointer;}
 
-        @media (max-width: 1024px) {
-            .main-layout { grid-template-columns: 240px 1fr; } 
-            .right-sidebar { display: none; }
+        /* MESSAGES */
+        #view-messages { display: flex; height: 100%; width: 100%; overflow: hidden; }
+        .msg-sidebar { width: 35%; border-right: 1px solid var(--border); display: flex; flex-direction: column; background: #000; }
+        .msg-header { padding: 20px; font-size: 20px; font-weight: bold; border-bottom: 1px solid var(--border); }
+        .contact-list { flex: 1; overflow-y: auto; }
+        
+        .contact-item { 
+            display: flex; align-items: center; gap: 15px; padding: 15px 20px; 
+            cursor: pointer; transition: 0.2s; border-bottom: 1px solid #1a1a1a; 
+            position: relative; 
+        }
+        .contact-item:hover, .contact-item.active { background: #111; }
+        
+        .delete-chat-btn {
+            position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
+            color: var(--text-grey); font-size: 14px; padding: 8px;
+            display: none; z-index: 5;
+        }
+        .contact-item:hover .delete-chat-btn { display: block; }
+        .delete-chat-btn:hover { color: var(--danger); }
+
+        .c-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); transition: 0.2s; }
+        .c-avatar:hover { border-color: var(--primary); transform: scale(1.05); }
+        
+        .c-name { font-weight: 600; font-size: 14px; color: #fff; }
+        .c-user { font-size: 12px; color: #777; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 150px; height: 15px; }
+        
+        .msg-window { flex: 1; display: flex; flex-direction: column; background: var(--surface); position: relative; }
+        
+        .chat-header-bar { 
+            padding: 10px 20px; border-bottom: 1px solid var(--border); background: #080808; 
+            display: flex; align-items: center; gap: 15px; cursor: pointer;
+        }
+        .header-info { display: flex; flex-direction: column; justify-content: center; }
+        #chat-header-name { font-weight: bold; font-size: 16px; color: #fff; line-height: 1.2; }
+        #chat-header-status { font-size: 12px; color: var(--text-grey); }
+        .online-dot { color: #00ff00; font-size: 10px; margin-right: 4px; }
+
+        .back-btn { display: none; font-size: 20px; cursor: pointer; }
+        .messages-feed { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 8px; }
+        
+        .msg-bubble { 
+            padding: 10px 16px; border-radius: 18px; max-width: 70%; font-size: 14px; word-wrap: break-word; position: relative; 
+            min-width: 60px;
+        }
+        .msg-mine { align-self: flex-end; background: var(--primary); color: #000; border-bottom-right-radius: 4px; }
+        .msg-other { align-self: flex-start; background: #262626; color: #fff; border-bottom-left-radius: 4px; }
+        .msg-username { font-size: 10px; color: var(--primary); margin-bottom: 2px; font-weight: bold;}
+        .msg-image { max-width: 200px; border-radius: 8px; margin-top: 5px; cursor: pointer; border: 1px solid #444; }
+        .msg-file-link { color: #fff; text-decoration: underline; display: block; margin-top: 5px; font-size: 12px; }
+        
+        .msg-time { font-size: 9px; text-align: right; margin-top: 4px; opacity: 0.7; font-weight: 600; }
+        .msg-mine .msg-time { color: #000; }
+        .msg-other .msg-time { color: #aaa; }
+
+        .chat-input-zone { padding: 15px; background: #000; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+        .chat-input { flex: 1; padding: 12px 20px; background: #111; border: 1px solid var(--border); color: #fff; border-radius: 25px; outline: none; }
+        
+        .btn-send {
+            width: 45px; height: 45px; border-radius: 50%; background: var(--primary); 
+            border: none; display: flex; align-items: center; justify-content: center;
+            color: #000; font-size: 18px; cursor: pointer; box-shadow: 0 0 10px rgba(0,243,255,0.4);
+            transition: 0.2s;
+        }
+        .btn-send:hover { transform: scale(1.1); background: #fff; }
+        .btn-send:disabled { background: var(--btn-grey); box-shadow: none; cursor: not-allowed; }
+
+        .empty-chat { display: flex; align-items: center; justify-content: center; height: 100%; flex-direction: column; color: var(--text-grey); }
+        .empty-icon { font-size: 50px; margin-bottom: 20px; color: #333; border: 2px solid #333; padding: 30px; border-radius: 50%; }
+        
+        #file-preview-area {
+            display: none; padding: 10px 20px; background: #111; border-top: 1px solid var(--border); 
+            color: var(--primary); font-size: 13px; align-items: center; justify-content: space-between;
         }
 
-        @media (max-width: 768px) {
+        #chat-blocked-msg, #chat-pending-msg {
+            width: 100%; text-align: center; color: #fff; font-weight: bold; 
+            padding: 15px; display: none;
+        }
+        #chat-blocked-msg { color: var(--danger); background: #1a0000; border-top: 1px solid var(--danger); }
+        #chat-pending-msg { color: var(--text-grey); background: #111; border-top: 1px solid #333; font-size:12px; }
+
+        /* --- PROFILE --- */
+        #view-profile { max-width: 935px; margin: 0 auto; padding: 30px 20px; }
+        .profile-header { display: flex; margin-bottom: 44px; align-items: flex-start; }
+        .p-avatar-container { flex-grow: 1; margin-right: 30px; display: flex; justify-content: center; }
+        .p-pic-xl { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; cursor: pointer; border: 2px solid var(--primary); }
+        .p-details { flex-grow: 2; color: #f5f5f5; }
+        .p-top-row { display: flex; align-items: center; margin-bottom: 20px; gap: 20px; flex-wrap: wrap; }
+        .p-username { font-size: 24px; font-weight: 400; font-family: 'Inter'; margin: 0; }
+        
+        .btn-insta-edit { background-color: var(--btn-grey); border: none; border-radius: 8px; color: #fff; font-weight: 600; padding: 7px 16px; font-size: 14px; cursor: pointer; }
+        .btn-insta-action { background-color: var(--primary); border: none; border-radius: 8px; color: #000; font-weight: 600; padding: 7px 20px; font-size: 14px; cursor: pointer; }
+        .settings-cog { font-size: 20px; cursor: pointer; margin-left: 10px; }
+
+        .p-stats-row { display: flex; gap: 40px; margin-bottom: 20px; font-size: 16px; list-style: none; padding: 0; }
+        .stat-num { font-weight: 700; color: #fff; cursor: pointer; }
+        .stat-num:hover { color: var(--primary); text-decoration: underline; }
+
+        .p-bio-section { font-size: 14px; line-height: 1.5; }
+        .p-realname { font-weight: 600; display: block; margin-bottom: 4px; }
+        .profile-tabs { border-top: 1px solid var(--border); display: flex; justify-content: center; gap: 60px; margin-bottom: 20px; }
+        .tab-item { padding-top: 15px; color: var(--text-grey); font-size: 12px; font-weight: 600; letter-spacing: 1px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-top: 1px solid transparent; margin-top: -1px; }
+        .tab-item.active { color: #fff; border-top: 1px solid #fff; }
+        .profile-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+        .grid-post-wrap { position: relative; aspect-ratio: 1/1; cursor: pointer; overflow: hidden; }
+        .grid-img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* RIGHT SIDEBAR */
+        .right-sidebar { padding: 30px 20px; overflow-y: auto; }
+        .sugg-title { font-weight: bold; color: var(--text-grey); margin-bottom: 20px; font-size: 14px; }
+        .user-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
+        .u-info { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .u-pic { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); }
+        .u-btn { color: var(--primary); font-size: 12px; font-weight: bold; background: none; border: none; cursor: pointer; }
+
+        /* MOBILE */
+        .mobile-nav { display: none; }
+        @media (max-width: 1000px) { .main-layout { grid-template-columns: 250px 1fr; } .right-sidebar { display: none; } }
+        @media (max-width: 800px) {
             .main-layout { display: block; }
             .sidebar { display: none; }
-            .mobile-nav {
-                position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%;
-                background: rgba(20, 25, 35, 0.9); backdrop-filter: blur(15px); border: 1px solid var(--border-color);
-                display: flex; justify-content: space-around; padding: 15px; border-radius: 25px; z-index: 100;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            }
-            .mobile-nav i { font-size: 24px; color: #888; transition: 0.2s; }
-            .mobile-nav i:hover, .mobile-nav i:active { color: var(--primary); transform: translateY(-3px); }
-            
-            .content-area { height: 100vh; padding-bottom: 100px; background: var(--bg-dark); }
+            .mobile-nav { position: fixed; bottom: 0; width: 100%; background: #000; border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 15px; z-index: 100; }
+            .feed-container, #view-profile { padding-bottom: 80px; }
+            .profile-header { flex-wrap: wrap; margin-bottom: 24px; gap: 15px; }
+            .p-avatar-container { margin-right: 0; }
+            .p-pic-xl { width: 77px; height: 77px; }
+            .p-details { width: calc(100% - 100px); }
+            .p-top-row { margin-bottom: 10px; flex-direction: column; align-items: flex-start; gap: 10px; }
+            .p-stats-row { width: 100%; justify-content: space-around; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 12px 0; margin-bottom: 10px; order: 2; }
+            .p-bio-section { margin-bottom: 15px; order: 1; }
+            .profile-grid { gap: 3px; }
             #view-messages { display: block; }
-            .msg-list-panel { width: 100%; height: 100%; border: none; background: transparent; }
-            .msg-window { 
-                position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 200; 
-                transform: translateX(100%); transition: 0.3s; background: #000;
-            }
+            .msg-sidebar { width: 100%; height: 100%; border-right: none; }
+            .msg-window { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 200; transform: translateX(100%); transition: transform 0.3s ease; }
             .msg-window.open { transform: translateX(0); }
             .back-btn { display: block; }
-            
-            .profile-header { flex-direction: column; text-align: center; gap: 20px; }
-            .stats { justify-content: center; width: 100%; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 15px 0; }
+            .content-area { height: calc(100vh - 60px); }
         }
+
+        /* MODALS */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; }
+        .modal-box { background: var(--surface); padding: 30px; width: 400px; border-radius: 10px; border: 1px solid var(--border); text-align: center; }
+        .settings-list { list-style: none; padding: 0; text-align: left; }
+        .settings-list li { padding: 15px; border-bottom: 1px solid #333; cursor: pointer; transition: 0.2s; color: #fff; }
+        .settings-list li:hover { background: #1a1a1a; padding-left: 20px; color: var(--primary); }
+        .settings-list li:last-child { border-bottom: none; color: #ff3040; }
+        
+        /* LIST MODAL */
+        .list-modal-content { max-height: 300px; overflow-y: auto; text-align: left; margin-top: 15px; }
+        .list-item { display: flex; align-items: center; gap: 10px; padding: 10px; border-bottom: 1px solid #333; cursor: pointer; }
+        .list-item:hover { background: #222; }
+        .list-item img { width: 40px; height: 40px; border-radius: 50%; }
+
     </style>
 </head>
 <body>
@@ -267,24 +276,21 @@
     <div id="loader"><div class="spinner"></div></div>
 
     <div id="auth-view">
-        <div class="auth-container">
-            <h1 class="cyber-font" style="color:var(--primary); font-size: 32px; margin-bottom: 10px;">CYBERHUB</h1>
-            <p style="color:var(--text-muted); margin-bottom: 30px;">SECURE • CONNECT • ENCRYPT</p>
-            
+        <div class="auth-box">
+            <h1 class="cyber-font" style="color:var(--primary); margin-bottom: 20px;">CYBERHUB</h1>
             <div id="login-form">
-                <input type="email" id="l-email" class="auth-input" placeholder="Enter Email ID">
-                <input type="password" id="l-pass" class="auth-input" placeholder="Enter Password">
-                <button class="btn auth-btn" onclick="login()">INITIALIZE LINK</button>
-                <div class="link" onclick="toggleAuth()">Create New Identity</div>
+                <input type="email" id="l-email" class="auth-input" placeholder="Email">
+                <input type="password" id="l-pass" class="auth-input" placeholder="Password">
+                <button class="auth-btn btn" onclick="login()">Log In</button>
+                <div class="link" onclick="toggleAuth()">Create New Account</div>
             </div>
-
             <div id="reg-form" class="hidden">
-                <input type="text" id="r-name" class="auth-input" placeholder="Display Name">
-                <input type="text" id="r-user" class="auth-input" placeholder="Codename (@user)">
-                <input type="email" id="r-email" class="auth-input" placeholder="Secure Email">
-                <input type="password" id="r-pass" class="auth-input" placeholder="Set Password">
-                <button class="btn auth-btn" onclick="register()">REGISTER AGENT</button>
-                <div class="link" onclick="toggleAuth()">Return to Login</div>
+                <input type="text" id="r-name" class="auth-input" placeholder="Full Name">
+                <input type="text" id="r-user" class="auth-input" placeholder="Username">
+                <input type="email" id="r-email" class="auth-input" placeholder="Email">
+                <input type="password" id="r-pass" class="auth-input" placeholder="Password">
+                <button class="auth-btn btn" onclick="register()">Sign Up</button>
+                <div class="link" onclick="toggleAuth()">Back to Login</div>
             </div>
         </div>
     </div>
@@ -294,151 +300,164 @@
             
             <div class="sidebar">
                 <div class="logo cyber-font">CYBERHUB</div>
-                <div class="nav-item active" onclick="nav('home', this)"><i class="fas fa-globe"></i> <span>Nexus Grid</span></div>
+                <div class="nav-item active" onclick="nav('home', this)"><i class="fas fa-home"></i> <span>Home</span></div>
                 <div class="nav-item" onclick="nav('search', this)"><i class="fas fa-search"></i> <span>Search</span></div>
-                <div class="nav-item" onclick="nav('notify', this)"><i class="fas fa-bell"></i> <span>Alerts</span></div>
-                <div class="nav-item" onclick="nav('messages', this)"><i class="fas fa-envelope"></i> <span>Comms</span></div>
-                <div class="nav-item" onclick="nav('profile', this)"><i class="fas fa-user-circle"></i> <span>Identity</span></div>
-                <div class="nav-item" onclick="openSettings()" style="margin-top:auto;"><i class="fas fa-cog"></i> <span>System</span></div>
+                <div class="nav-item" onclick="nav('notify', this)"><i class="fas fa-bell"></i> <span>Notify</span></div>
+                <div class="nav-item" onclick="nav('messages', this)"><i class="fas fa-envelope"></i> <span>Messages</span></div>
+                <div class="nav-item" onclick="nav('profile', this)"><i class="fas fa-user"></i> <span>Profile</span></div>
+                <div class="nav-item" onclick="openSettings()" style="margin-top:auto;"><i class="fas fa-bars"></i> <span>More</span></div>
             </div>
 
             <div class="content-area">
                 
                 <div id="view-home" class="view-section">
-                    <div class="hero-header">
+                    <div class="hero-section">
                         <h1 class="hero-title">CYBERHUB</h1>
                         <p class="hero-sub">GLOBAL AGENT DIRECTORY</p>
                     </div>
-                    <div class="grid-container">
+                    <div class="feed-container">
                         <div id="feed-list" class="agent-grid"></div>
                     </div>
                 </div>
 
-                <div id="view-search" class="view-section hidden" style="padding: 40px;">
-                    <input type="text" class="search-bar" id="search-input" placeholder="Scan for agent signal..." onkeyup="searchUsers()">
+                <div id="view-search" class="view-section hidden">
+                    <input type="text" class="search-input" id="search-input" placeholder="Search users..." onkeyup="searchUsers()">
                     <div id="search-results"></div>
                 </div>
 
-                <div id="view-notify" class="view-section hidden" style="padding: 30px; max-width: 700px; margin: 0 auto;">
-                    <h2 style="font-family:'Orbitron'; border-bottom:1px solid #333; padding-bottom:15px; margin-bottom:20px;">SYSTEM LOGS</h2>
+                <div id="view-notify" class="view-section hidden">
+                    <div class="notif-header">ACTIVITY</div>
                     <div id="notify-list">
-                        <div style="text-align:center; color:#555;">No activity detected.</div>
+                        <div style="text-align:center;color:#555;">No notifications yet.</div>
                     </div>
                 </div>
 
                 <div id="view-messages" class="view-section hidden">
-                    <div class="msg-list-panel">
-                        <div class="msg-header">CHANNELS</div>
-                        <div class="contacts-scroll" id="contact-list"></div>
+                    <div class="msg-sidebar">
+                        <div class="msg-header">Chats</div>
+                        <div class="contact-list" id="contact-list">
+                            <div style="padding:20px; color:#555;">Loading...</div>
+                        </div>
                     </div>
                     <div class="msg-window" id="msg-window">
-                        <div class="empty-chat" id="empty-chat-state" style="height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-                            <i class="fas fa-comments" style="font-size:50px; color:#333; margin-bottom:20px;"></i>
-                            <h3 style="color:#555;">Select a frequency</h3>
+                        <div class="empty-chat" id="empty-chat-state">
+                            <div class="empty-icon"><i class="fas fa-paper-plane"></i></div>
+                            <h3>Your Messages</h3>
+                            <p>Select a chat to start messaging</p>
                         </div>
-                        
-                        <div id="active-chat-ui" class="hidden" style="display:flex; flex-direction:column; height:100%;">
-                            <div class="chat-top-bar" id="chat-main-header">
+                        <div id="active-chat-ui" class="hidden" style="display: flex; flex-direction: column; height: 100%;">
+                            
+                            <div class="chat-header-bar" id="chat-main-header">
                                 <i class="fas fa-arrow-left back-btn" onclick="closeChatMobile()"></i>
                                 <img src="" id="chat-header-pic" style="width:40px; height:40px; border-radius:50%;">
-                                <div>
-                                    <div id="chat-header-name" style="font-weight:bold; color:#fff;">User</div>
-                                    <div id="chat-header-status" style="font-size:12px; color:#888;">Connecting...</div>
+                                <div class="header-info">
+                                    <span id="chat-header-name">User</span>
+                                    <span id="chat-header-status">Loading...</span>
                                 </div>
                             </div>
 
-                            <div class="chat-feed" id="messages-feed"></div>
-
-                            <div id="file-preview-area" style="padding:10px; background:#111; display:none; border-top:1px solid #333;">
-                                <span id="preview-filename" style="font-size:13px; color:var(--primary);"></span>
-                                <i class="fas fa-times" style="float:right; cursor:pointer;" onclick="clearChatFile()"></i>
+                            <div class="messages-feed" id="messages-feed"></div>
+                            
+                            <div id="file-preview-area">
+                                <span id="preview-filename"></span>
+                                <i class="fas fa-times" style="cursor:pointer; color:#fff;" onclick="clearChatFile()"></i>
                             </div>
 
-                            <div class="chat-input-bar">
+                            <div class="chat-input-zone">
                                 <label for="chat-file-btn" style="cursor:pointer; color:var(--primary); font-size:20px;"><i class="fas fa-paperclip"></i></label>
                                 <input type="file" id="chat-file-btn" hidden onchange="handleChatFileSelect(this)">
-                                <input type="text" id="chat-input" class="chat-field" placeholder="Type encrypted message...">
-                                <button class="btn send-btn" id="send-msg-btn" onclick="sendPrivateMsg()"><i class="fas fa-paper-plane"></i></button>
+                                <input type="text" id="chat-input" class="chat-input" placeholder="Type a message...">
+                                <button class="btn-send" id="send-msg-btn" onclick="sendPrivateMsg()"><i class="fas fa-paper-plane"></i></button>
                             </div>
-
-                            <div id="chat-blocked-msg" class="blocked-banner">CONNECTION BLOCKED</div>
-                            <div id="chat-pending-msg" class="pending-banner">CONNECTION REQUEST SENT // WAITING FOR ACKNOWLEDGMENT</div>
+                            
+                            <div id="chat-blocked-msg">You can't Message Here</div>
+                            <div id="chat-pending-msg">Request sent. Waiting for acceptance...</div>
                         </div>
                     </div>
                 </div>
 
                 <div id="view-profile" class="view-section hidden">
-                    <div class="profile-head">
-                        <div>
+                    <div class="profile-header">
+                        <div class="p-avatar-container">
                             <img src="" id="p-img" class="p-pic-xl">
                         </div>
-                        <div style="flex:1;">
-                            <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap; margin-bottom:20px;" id="p-action-row"></div>
-                            
-                            <ul class="stats">
-                                <li><span class="stat-val" id="p-followers" onclick="openListModal('followers')">0</span> followers</li>
-                                <li><span class="stat-val" id="p-following" onclick="openListModal('following')">0</span> following</li>
+                        <div class="p-details">
+                            <div class="p-top-row" id="p-action-row"></div>
+                            <ul class="p-stats-row">
+                                <li><span class="stat-num" id="p-post-count">0</span> posts</li>
+                                <li><span class="stat-num clickable" id="p-followers" onclick="openListModal('followers')">0</span> followers</li>
+                                <li><span class="stat-num clickable" id="p-following" onclick="openListModal('following')">0</span> following</li>
                             </ul>
-                            
-                            <div style="font-size:16px; color:#ccc; line-height:1.6;">
-                                <div id="p-name" style="font-weight:700; color:#fff; font-size:18px;"></div>
-                                <div id="p-gender-display" style="font-size:12px; color:var(--primary); font-weight:bold; margin-bottom:5px;"></div>
-                                <div id="p-bio"></div>
+                            <div class="p-bio-section">
+                                <span class="p-realname" id="p-name">Full Name</span>
+                                <div id="p-gender-display" style="font-size:12px; color:#aaa; margin-bottom:5px;"></div>
+                                <div id="p-bio" style="color:#f5f5f5;"></div>
                             </div>
                         </div>
                     </div>
+                    <div class="profile-tabs">
+                        <div class="tab-item active"><i class="fas fa-th"></i> POSTS</div>
+                        <div class="tab-item"><i class="fas fa-bookmark"></i> SAVED</div>
+                        <div class="tab-item"><i class="fas fa-user-tag"></i> TAGGED</div>
+                    </div>
+                    <div class="profile-grid" id="p-grid"></div>
                 </div>
-
             </div>
 
             <div class="right-sidebar">
-                <div class="section-title">SUGGESTED AGENTS</div>
+                <div class="sugg-title">Suggested Agents</div>
                 <div id="suggestions-list"></div>
             </div>
 
         </div>
 
         <div class="mobile-nav">
-            <i class="fas fa-globe" onclick="nav('home')"></i>
-            <i class="fas fa-search" onclick="nav('search')"></i>
-            <i class="fas fa-bell" onclick="nav('notify')"></i>
-            <i class="fas fa-envelope" onclick="nav('messages')"></i>
-            <i class="fas fa-user-circle" onclick="nav('profile')"></i>
+            <i class="fas fa-home" style="color:#fff; font-size:24px;" onclick="nav('home')"></i>
+            <i class="fas fa-search" style="color:#fff; font-size:24px;" onclick="nav('search')"></i>
+            <i class="fas fa-bell" style="color:#fff; font-size:24px;" onclick="nav('notify')"></i>
+            <i class="fas fa-envelope" style="color:#fff; font-size:24px;" onclick="nav('messages')"></i>
+            <i class="fas fa-user" style="color:#fff; font-size:24px;" onclick="nav('profile')"></i>
         </div>
     </div>
 
-    <div id="list-modal" class="modal-wrap">
-        <div class="modal-content">
-            <h3 id="list-title" style="color:var(--primary); margin-bottom:15px; font-family:'Orbitron'">LIST</h3>
-            <div id="list-content" style="max-height:300px; overflow-y:auto; text-align:left;"></div>
-            <button class="btn" style="margin-top:20px; background:transparent; border:1px solid #555; color:#fff; width:100%; padding:10px;" onclick="document.getElementById('list-modal').style.display='none'">CLOSE</button>
+    <div id="list-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 id="list-title" style="margin-bottom:10px;">LIST</h3>
+            <div id="list-content" class="list-modal-content"></div>
+            <button class="btn" style="background:#333; color:#fff; width:100%; margin-top:20px;" onclick="document.getElementById('list-modal').style.display='none'">CLOSE</button>
         </div>
     </div>
 
-    <div id="edit-modal" class="modal-wrap">
-        <div class="modal-content">
-            <h3 style="color:#fff; margin-bottom:20px;">EDIT IDENTITY</h3>
+    <div id="edit-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h3>Edit Profile</h3>
             <input type="text" id="edit-name" class="auth-input" placeholder="Name">
             <input type="text" id="edit-bio" class="auth-input" placeholder="Bio">
-            <select id="edit-gender" class="auth-input" style="background:#222;">
+            <select id="edit-gender" class="auth-input" style="background:var(--surface);">
                 <option value="" disabled selected>Select Gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
                 <option value="Other">Other</option>
             </select>
-            <input type="file" id="file-up-avi" style="margin-top:10px; color:#fff;">
+            <input type="file" id="file-up-avi" style="margin-top:10px;">
             <div style="margin-top:20px; display:flex; gap:10px;">
-                <button class="btn auth-btn" onclick="saveProfile()">SAVE</button>
-                <button class="btn" style="background:#333; color:#fff; flex:1; margin-top:10px;" onclick="document.getElementById('edit-modal').style.display='none'">CANCEL</button>
+                <button class="auth-btn btn" onclick="saveProfile()">Save</button>
+                <button class="btn" style="background:#333; color:#fff; flex:1;" onclick="document.getElementById('edit-modal').style.display='none'">Cancel</button>
             </div>
         </div>
     </div>
 
-    <div id="settings-modal" class="modal-wrap">
-        <div class="modal-content" style="width:300px; padding:0;">
-            <div style="padding:15px; border-bottom:1px solid #333; cursor:pointer; color:#fff;">Settings</div>
-            <div style="padding:15px; border-bottom:1px solid #333; cursor:pointer; color:var(--danger);" onclick="logout()">LOGOUT</div>
-            <div style="padding:15px; cursor:pointer; color:#888;" onclick="document.getElementById('settings-modal').style.display='none'">Cancel</div>
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal-box" style="width: 300px; padding: 0;">
+            <ul class="settings-list">
+                <li>Apps and Websites</li>
+                <li>QR Code</li>
+                <li>Notifications</li>
+                <li>Settings and privacy</li>
+                <li>Supervision</li>
+                <li onclick="logout()">Log Out</li>
+                <li style="color:#fff; border-top: 1px solid #333;" onclick="document.getElementById('settings-modal').style.display='none'">Cancel</li>
+            </ul>
         </div>
     </div>
 
@@ -469,11 +488,12 @@
         let unsubscribeProfile = null;
         let selectedChatFile = null;
         let activeChatListener = null; 
-        let currentProfileData = null;
+        let currentProfileData = null; // Store current profile data for list view
+        
         let myFollowingList = [];
         let allUsersCache = [];
 
-        // --- AUTH ---
+        // AUTH
         window.login = async () => { try { await signInWithEmailAndPassword(auth, document.getElementById('l-email').value, document.getElementById('l-pass').value); } catch(e) { alert(e.message); } };
         window.register = async () => {
             const name = document.getElementById('r-name').value;
@@ -493,7 +513,7 @@
         window.logout = () => signOut(auth);
         window.toggleAuth = () => { const l=document.getElementById('login-form'), r=document.getElementById('reg-form'); if(l.classList.contains('hidden')){l.classList.remove('hidden');r.classList.add('hidden');}else{l.classList.add('hidden');r.classList.remove('hidden');} };
 
-        // --- INIT ---
+        // APP INIT
         onAuthStateChanged(auth, (u) => {
             document.getElementById('loader').style.display='none';
             if(u) { 
@@ -507,15 +527,20 @@
             else { document.getElementById('auth-view').style.display='flex'; document.getElementById('app-view').style.display='none'; }
         });
 
-        async function updatePresence() { if(userNow) { await updateDoc(doc(db, "users", userNow.uid), { lastSeen: serverTimestamp() }); } }
+        async function updatePresence() {
+            if(userNow) { await updateDoc(doc(db, "users", userNow.uid), { lastSeen: serverTimestamp() }); }
+        }
 
         function initApp() {
+            // Listen to MY User Profile to get real-time following list
             onSnapshot(doc(db, "users", userNow.uid), (docSnap) => {
                 if(docSnap.exists()){
                     myFollowingList = docSnap.data().following || [];
                     renderAllUserLists(); 
                 }
             });
+
+            // Listen to ALL Users to build the cache
             onSnapshot(collection(db, "users"), (snap) => {
                 allUsersCache = [];
                 snap.forEach(docSnap => {
@@ -524,80 +549,102 @@
                 });
                 renderAllUserLists();
             });
+
             loadMsgContacts();
             listenToNotifications();
         }
 
+        // --- RENDER LOGIC FOR HOME GRID & SUGGESTIONS ---
         function renderAllUserLists() {
             const feedContainer = document.getElementById('feed-list');
             const suggContainer = document.getElementById('suggestions-list');
+            
             feedContainer.innerHTML = '';
             suggContainer.innerHTML = '';
+
             let hasSuggestions = false;
 
+            // 1. HOME GRID: Show EVERYONE (except me)
             allUsersCache.forEach(u => {
                 feedContainer.innerHTML += `
-                <div class="agent-card">
-                    <img src="${u.photo}" class="agent-img">
+                <div class="agent-card" onclick="openProfile('${u.uid}')">
+                    <img src="${u.photo}">
                     <div class="agent-name">${u.name}</div>
                     <div class="agent-user">@${u.username}</div>
-                    <button class="agent-btn" onclick="openProfile('${u.uid}')">VIEW PROFILE</button>
+                    <button class="agent-btn">VIEW PROFILE</button>
                 </div>`;
 
+                // 2. SUGGESTIONS: Only show NOT FOLLOWED
                 if(!myFollowingList.includes(u.uid)) {
                     hasSuggestions = true;
                     suggContainer.innerHTML += `
                     <div class="user-row">
                         <div class="u-info" onclick="openProfile('${u.uid}')">
-                            <img src="${u.photo}" class="u-img">
-                            <div><div style="font-weight:700; font-size:14px; color:#fff;">${u.username}</div></div>
+                            <img src="${u.photo}" class="u-pic">
+                            <div><div style="font-weight:bold; font-size:13px;">${u.username}</div></div>
                         </div>
-                        <button class="u-btn" onclick="follow('${u.uid}')">Connect</button>
+                        <button class="u-btn" onclick="follow('${u.uid}')">Follow</button>
                     </div>`;
                 }
             });
-            if(!hasSuggestions) suggContainer.innerHTML = '<div style="color:#666;text-align:center; font-size:12px;">No new signals.</div>';
+
+            if(!hasSuggestions) {
+                suggContainer.innerHTML = '<div style="color:#777;text-align:center;">No new agents.</div>';
+            }
         }
 
-        // --- CORE FEATURES ---
-        window.openProfile = (uid) => {
-            if(!uid) uid = userNow.uid;
-            if(unsubscribeProfile) unsubscribeProfile();
-            nav('profile');
-            unsubscribeProfile = onSnapshot(doc(db, "users", uid), (s) => {
-                if(s.exists()){ 
-                    const d=s.data(); 
-                    currentProfileData = d;
-                    document.getElementById('p-img').src=d.photo; 
-                    document.getElementById('p-name').innerText=d.name; 
-                    document.getElementById('p-bio').innerText=d.bio;
-                    document.getElementById('p-gender-display').innerText=d.gender || "";
-                    document.getElementById('p-followers').innerText=d.followers?d.followers.length:0;
-                    document.getElementById('p-following').innerText=d.following?d.following.length:0;
-                    
-                    const row = document.getElementById('p-action-row');
-                    if(uid === userNow.uid) {
-                        row.innerHTML = `<h2 class="p-username">${d.username}</h2><button class="btn-insta-edit" onclick="openEditModal()">Edit</button><button class="btn-insta-edit">Archive</button><i class="fas fa-cog settings-cog" onclick="openSettings()"></i>`;
-                        document.getElementById('edit-name').value=d.name; 
-                        document.getElementById('edit-bio').value=d.bio;
-                        document.getElementById('edit-gender').value=d.gender || "";
-                    } else {
-                        const isFollowing = d.followers && d.followers.includes(userNow.uid);
-                        let btnHtml = isFollowing 
-                            ? `<button class="btn-insta-edit" onclick="unfollow('${d.uid}')">Linked</button>`
-                            : `<button class="btn-insta-action btn-blue" onclick="follow('${d.uid}')">Connect</button>`;
-                        row.innerHTML = `<h2 class="p-username">${d.username}</h2>${btnHtml}<button class="btn-insta-edit" onclick='nav("messages"); startPrivateChat(${JSON.stringify(d)})'>Signal</button>`;
-                    }
+        // --- LIST MODAL (FOLLOWERS/FOLLOWING) ---
+        window.openListModal = async (type) => {
+            if(!currentProfileData) return;
+            
+            const listIds = (type === 'followers') ? currentProfileData.followers : currentProfileData.following;
+            const modal = document.getElementById('list-modal');
+            const title = document.getElementById('list-title');
+            const content = document.getElementById('list-content');
+            
+            title.innerText = type.toUpperCase();
+            content.innerHTML = '<div style="text-align:center; padding:20px;">Loading...</div>';
+            modal.style.display = 'flex';
+            
+            if(!listIds || listIds.length === 0) {
+                content.innerHTML = '<div style="text-align:center; padding:20px; color:#555;">List is empty.</div>';
+                return;
+            }
+
+            // Fetch users in list
+            content.innerHTML = "";
+            // Since firestore 'in' query has limit 10, we iterate manually or fetch all users (we have allUsersCache)
+            // Using allUsersCache is faster and saves reads
+            
+            // Add 'Me' to cache logic temporarily for this list view if needed, but usually cache has everyone else
+            // If viewing my own list, I won't be in cache. If viewing others, they might be in my cache.
+            
+            // Safer: Fetch specific docs
+            for(const uid of listIds) {
+                const docRef = doc(db, "users", uid);
+                const docSnap = await getDoc(docRef);
+                if(docSnap.exists()) {
+                    const u = docSnap.data();
+                    content.innerHTML += `
+                    <div class="list-item" onclick="openProfile('${u.uid}'); document.getElementById('list-modal').style.display='none';">
+                        <img src="${u.photo}">
+                        <div>
+                            <div style="font-weight:bold;">${u.username}</div>
+                            <div style="font-size:12px; color:#aaa;">${u.name}</div>
+                        </div>
+                    </div>`;
                 }
-            });
+            }
         };
 
+        // --- NOTIFICATIONS (REQUESTS LOGIC) ---
         function listenToNotifications() {
             const q = query(collection(db, "notifications"), where("targetUid", "==", userNow.uid));
             onSnapshot(q, (snap) => {
                 const list = document.getElementById('notify-list');
                 list.innerHTML = "";
-                if(snap.empty) { list.innerHTML = `<div style="text-align:center;color:#555;margin-top:20px;">No activity detected.</div>`; return; }
+                if(snap.empty) { list.innerHTML = `<div style="text-align:center;color:#555;padding:20px;">No activity yet.</div>`; return; }
+                
                 let notifs = [];
                 snap.forEach(d => notifs.push({id: d.id, ...d.data()}));
                 notifs.sort((a,b) => b.time - a.time);
@@ -605,23 +652,46 @@
                 notifs.forEach(n => {
                     let actionHtml = "";
                     let contentText = "";
+
                     if(n.type === 'message_request') {
-                        contentText = "requesting secure link.";
+                        contentText = "wants to send you a message.";
                         if(n.status === 'pending') {
-                            actionHtml = `<div style="margin-top:5px;"><button class="btn btn-xs btn-success" style="background:#00ff99;color:#000;margin-right:5px;" onclick="respondRequest('${n.chatId}', '${n.id}', 'accept')">ACCEPT</button><button class="btn btn-xs btn-danger" style="background:#ff3344;color:#fff;" onclick="respondRequest('${n.chatId}', '${n.id}', 'deny')">DENY</button></div>`;
-                        } else { actionHtml = `<div style="font-size:11px; color:#555; margin-top:5px;">${n.status.toUpperCase()}</div>`; }
-                    } else if(n.type === 'follow') contentText = "is tracking your signal.";
-                    else if(n.type === 'unfollow') contentText = "stopped tracking.";
-                    else if(n.type === 'message') contentText = "encrypted message received.";
+                            actionHtml = `
+                            <div class="notif-actions">
+                                <button class="btn-req-accept" onclick="respondRequest('${n.chatId}', '${n.id}', 'accept')">Confirm</button>
+                                <button class="btn-req-deny" onclick="respondRequest('${n.chatId}', '${n.id}', 'deny')">Delete</button>
+                            </div>`;
+                        } else {
+                            actionHtml = `<div style="font-size:11px; color:#555; margin-top:5px;">${n.status.toUpperCase()}</div>`;
+                        }
+                    } else if(n.type === 'follow') contentText = "started following you.";
+                    else if(n.type === 'unfollow') contentText = "unfollowed you.";
+                    else if(n.type === 'message') contentText = "sent you a message.";
                     
-                    list.innerHTML += `<div class="notif-card"><img src="${n.actorPic}" class="notif-img"><div style="flex:1;"><div style="font-size:14px; color:#ddd;"><span style="color:var(--primary);font-weight:700;">${n.actorName}</span> ${contentText}</div>${actionHtml}</div></div>`;
+                    list.innerHTML += `
+                    <div class="notif-item">
+                        <img src="${n.actorPic}" class="notif-pic">
+                        <div class="notif-content">
+                            <div class="notif-text"><span class="notif-highlight">${n.actorName}</span> ${contentText}</div>
+                            ${actionHtml}
+                        </div>
+                    </div>`;
                 });
             });
         }
 
         async function createNotification(targetUid, type, chatId = null) {
             if(targetUid === userNow.uid) return;
-            await addDoc(collection(db, "notifications"), { targetUid: targetUid, type: type, actorUid: userNow.uid, actorName: userNow.displayName, actorPic: userNow.photoURL, time: serverTimestamp(), chatId: chatId, status: 'pending' });
+            await addDoc(collection(db, "notifications"), {
+                targetUid: targetUid,
+                type: type,
+                actorUid: userNow.uid,
+                actorName: userNow.displayName,
+                actorPic: userNow.photoURL,
+                time: serverTimestamp(),
+                chatId: chatId,
+                status: 'pending' 
+            });
         }
 
         window.respondRequest = async (chatId, notifId, action) => {
@@ -630,19 +700,19 @@
             await updateDoc(doc(db, "notifications", notifId), { status: status });
         };
 
-        // --- CHAT LOGIC ---
+        // --- MESSAGES ---
         function loadMsgContacts() {
             const q = query(collection(db, "users"), limit(50));
             onSnapshot(q, (snap) => {
                 const list = document.getElementById('contact-list');
-                let html = `<div class="contact-item" onclick="startPrivateChat({uid:'global_wwc', username:'WWC', name:'Global Chat', photo:'https://ui-avatars.com/api/?name=WWC&background=00f3ff&color=000'})"><img src="https://ui-avatars.com/api/?name=WWC&background=00f3ff&color=000"><div><div style="font-weight:bold; color:#fff;">WWC</div><div style="font-size:12px; color:#888;">Global Chat</div></div></div>`;
+                let html = `<div class="contact-item" onclick="startPrivateChat({uid:'global_wwc', username:'WWC', name:'Global Chat', photo:'https://ui-avatars.com/api/?name=WWC&background=00f3ff&color=000'})"><img src="https://ui-avatars.com/api/?name=WWC&background=00f3ff&color=000" class="c-avatar"><div><div class="c-name">WWC</div><div class="c-user">Global Chat</div></div></div>`;
                 snap.forEach(docSnap => {
                     const u = docSnap.data();
                     if(u.uid !== userNow.uid) {
                         html += `<div class="contact-item" onclick='startPrivateChat(${JSON.stringify(u)})'>
-                                    <img src="${u.photo}" onclick="event.stopPropagation(); openProfile('${u.uid}')">
-                                    <div><div style="font-weight:bold; color:#fff;">${u.name || u.username}</div><div style="font-size:12px; color:#777;" id="last-msg-${u.uid}">Decrypting...</div></div>
-                                    <i class="fas fa-trash del-btn" onclick="event.stopPropagation(); if(confirm('Hide?')) this.closest('.contact-item').remove()"></i>
+                                    <img src="${u.photo}" class="c-avatar" onclick="event.stopPropagation(); openProfile('${u.uid}')">
+                                    <div><div class="c-name">${u.name || u.username}</div><div class="c-user" id="last-msg-${u.uid}">Loading...</div></div>
+                                    <i class="fas fa-trash delete-chat-btn" onclick="deleteContactFromList(event, this)"></i>
                                  </div>`;
                     }
                 });
@@ -651,16 +721,37 @@
                     const u = docSnap.data();
                     if(u.uid !== userNow.uid) {
                         let chatId = [userNow.uid, u.uid].sort().join("_");
-                        const q2 = query(collection(db, "chats", chatId, "messages"), orderBy("time", "desc"), limit(1));
-                        onSnapshot(q2, (s) => {
-                            const el = document.getElementById(`last-msg-${u.uid}`);
-                            if(el && !s.empty) el.innerText = (s.docs[0].data().uid === userNow.uid ? "You: " : "") + (s.docs[0].data().text || "File");
-                            else if(el) el.innerText = "Start comms";
-                        });
+                        listenForLastMessage(chatId, `last-msg-${u.uid}`);
                     }
                 });
             });
         }
+
+        function listenForLastMessage(chatId, elementId) {
+            const q = query(collection(db, "chats", chatId, "messages"), orderBy("time", "desc"), limit(1));
+            onSnapshot(q, (snap) => {
+                const el = document.getElementById(elementId);
+                if(el) {
+                    if(!snap.empty) {
+                        const m = snap.docs[0].data();
+                        let text = m.text;
+                        if(!text && m.mediaUrl) text = "📎 Attachment";
+                        if(text.length > 20) text = text.substring(0, 18) + "...";
+                        const prefix = (m.uid === userNow.uid) ? "You: " : "";
+                        el.innerText = prefix + text;
+                        el.style.color = (m.uid !== userNow.uid) ? "#fff" : "#777";
+                        if(m.uid !== userNow.uid) el.style.fontWeight = "bold";
+                    } else {
+                        el.innerText = "Start a conversation";
+                    }
+                }
+            });
+        }
+
+        window.deleteContactFromList = (event, element) => {
+            event.stopPropagation();
+            if(confirm("Remove from view?")) { element.closest('.contact-item').remove(); }
+        };
 
         window.startPrivateChat = async (targetUser) => {
             activeChatUser = targetUser;
@@ -678,32 +769,55 @@
             
             if(targetUser.uid !== 'global_wwc') {
                 document.getElementById('chat-main-header').onclick = () => openProfile(targetUser.uid);
-                
+            }
+
+            if(activeChatListener) activeChatListener();
+            
+            if(targetUser.uid !== 'global_wwc') {
                 const chatId = [userNow.uid, targetUser.uid].sort().join("_");
                 activeChatListener = onSnapshot(doc(db, "chats", chatId), (s) => {
                     if(s.exists()) {
-                        const st = s.data().status;
-                        if(st === 'denied') {
+                        const data = s.data();
+                        const status = data.status;
+                        
+                        if(status === 'denied') {
                             document.querySelector('.chat-input-zone').style.display = 'none';
                             document.getElementById('chat-blocked-msg').style.display = 'block';
-                        } else if(st === 'pending' && s.data().requester === userNow.uid) {
-                            document.querySelector('.chat-input-zone').style.display = 'none';
-                            document.getElementById('chat-pending-msg').style.display = 'block';
+                            document.getElementById('chat-pending-msg').style.display = 'none';
+                        } else if(status === 'pending') {
+                            if(data.requester === userNow.uid) {
+                                document.querySelector('.chat-input-zone').style.display = 'none';
+                                document.getElementById('chat-pending-msg').style.display = 'block';
+                            }
+                        } else if(status === 'accepted') {
+                            document.querySelector('.chat-input-zone').style.display = 'flex';
+                            document.getElementById('chat-blocked-msg').style.display = 'none';
+                            document.getElementById('chat-pending-msg').style.display = 'none';
                         }
                     }
                 });
+            }
 
-                unsubscribeUserStatus = onSnapshot(doc(db, "users", targetUser.uid), (d) => {
-                    if(d.exists()) {
-                        const ls = d.data().lastSeen ? d.data().lastSeen.toDate() : null;
-                        const el = document.getElementById('chat-header-status');
-                        if(ls && (new Date() - ls) < 120000) { el.innerText = "ONLINE"; el.style.color = "#00ff99"; }
-                        else { el.innerText = "OFFLINE"; el.style.color = "#777"; }
+            if(unsubscribeUserStatus) unsubscribeUserStatus();
+            if(targetUser.uid !== 'global_wwc') {
+                unsubscribeUserStatus = onSnapshot(doc(db, "users", targetUser.uid), (docSnap) => {
+                    if(docSnap.exists()) {
+                        const data = docSnap.data();
+                        const lastSeen = data.lastSeen ? data.lastSeen.toDate() : null;
+                        const now = new Date();
+                        const statusEl = document.getElementById('chat-header-status');
+                        
+                        if(lastSeen && (now - lastSeen) < 120000) {
+                            statusEl.innerHTML = '<span class="online-dot">●</span> Online';
+                            statusEl.style.color = "#fff";
+                        } else {
+                            statusEl.innerText = lastSeen ? "Last seen " + formatTime(lastSeen) : "Offline";
+                            statusEl.style.color = "#a8a8a8";
+                        }
                     }
                 });
             } else {
-                document.getElementById('chat-header-status').innerText = "OPEN CHANNEL";
-                document.getElementById('chat-main-header').onclick = null;
+                document.getElementById('chat-header-status').innerText = "Always Online";
             }
 
             let chatId = (targetUser.uid === 'global_wwc') ? 'global_wwc' : [userNow.uid, targetUser.uid].sort().join("_");
@@ -714,25 +828,42 @@
                 feed.innerHTML = "";
                 snap.forEach(docSnap => {
                     const m = docSnap.data();
-                    const cls = m.uid === userNow.uid ? 'msg-out' : 'msg-in';
-                    const nameTag = (targetUser.uid === 'global_wwc' && m.uid !== userNow.uid) ? `<div style="font-size:10px;color:var(--primary);margin-bottom:2px;">${m.user}</div>` : '';
-                    let content = m.text;
+                    const cls = m.uid === userNow.uid ? 'msg-mine' : 'msg-other';
+                    const nameTag = (targetUser.uid === 'global_wwc' && m.uid !== userNow.uid) ? `<div class="msg-username">${m.user}</div>` : '';
+                    let content = '';
                     if(m.mediaUrl) {
-                        content = `<img src="${m.mediaUrl}" class="msg-image" onclick="window.open(this.src)">`;
+                        if(m.mediaType && m.mediaType.startsWith('image/')) {
+                            content = `<img src="${m.mediaUrl}" class="msg-image" onclick="window.open(this.src)">`;
+                        } else {
+                            content = `<a href="${m.mediaUrl}" target="_blank" class="msg-file-link"><i class="fas fa-file"></i> Attachment</a>`;
+                        }
                         if(m.text) content += `<div style="margin-top:5px;">${m.text}</div>`;
+                    } else {
+                        content = m.text;
                     }
-                    const time = m.time ? new Date(m.time.toDate()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
-                    feed.innerHTML += `<div class="msg-bubble ${cls}">${nameTag}${content}<span class="msg-meta">${time}</span></div>`;
+                    let timeStr = "";
+                    if(m.time) { timeStr = formatTime(m.time.toDate()); }
+                    feed.innerHTML += `<div class="msg-bubble ${cls}">${nameTag}${content}<div class="msg-time">${timeStr}</div></div>`;
                 });
                 feed.scrollTop = feed.scrollHeight;
             });
         };
 
+        function formatTime(date) {
+            let hours = date.getHours();
+            let minutes = date.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; 
+            minutes = minutes < 10 ? '0'+minutes : minutes;
+            return hours + ':' + minutes + ' ' + ampm;
+        }
+
         window.handleChatFileSelect = (input) => {
             if(input.files && input.files[0]) {
                 selectedChatFile = input.files[0];
-                document.getElementById('file-preview-area').style.display = 'block';
-                document.getElementById('preview-filename').innerText = "File: " + selectedChatFile.name;
+                document.getElementById('file-preview-area').style.display = 'flex';
+                document.getElementById('preview-filename').innerText = "Attached: " + selectedChatFile.name;
             }
         };
 
@@ -753,42 +884,102 @@
                 let chatId = (activeChatUser.uid === 'global_wwc') ? 'global_wwc' : [userNow.uid, activeChatUser.uid].sort().join("_");
                 
                 if(activeChatUser.uid !== 'global_wwc') {
-                    const ref = doc(db, "chats", chatId);
-                    const snap = await getDoc(ref);
-                    if(!snap.exists()) {
-                        await setDoc(ref, { status: 'pending', requester: userNow.uid, recipient: activeChatUser.uid, createdAt: serverTimestamp() });
+                    const chatDocRef = doc(db, "chats", chatId);
+                    const chatSnap = await getDoc(chatDocRef);
+                    
+                    if(!chatSnap.exists()) {
+                        await setDoc(chatDocRef, {
+                            status: 'pending',
+                            requester: userNow.uid,
+                            recipient: activeChatUser.uid,
+                            createdAt: serverTimestamp()
+                        });
                         createNotification(activeChatUser.uid, 'message_request', chatId);
-                    } else if(snap.data().status === 'denied') throw new Error("Connection Denied.");
+                    }
                 }
 
-                let mediaUrl = null, mediaType = null;
+                let mediaUrl = null;
+                let mediaType = null;
                 if(selectedChatFile) {
-                    if(selectedChatFile.size > 10 * 1024 * 1024) throw new Error("Max file size 10MB");
-                    const sRef = ref(storage, `chat_files/${chatId}/${Date.now()}_${selectedChatFile.name}`);
-                    await uploadBytes(sRef, selectedChatFile);
-                    mediaUrl = await getDownloadURL(sRef);
+                    if (selectedChatFile.size > 10 * 1024 * 1024) { throw new Error("File too large. Max 10MB."); }
+                    const storageRef = ref(storage, `chat_files/${chatId}/${Date.now()}_${selectedChatFile.name}`);
+                    await uploadBytes(storageRef, selectedChatFile);
+                    mediaUrl = await getDownloadURL(storageRef);
                     mediaType = selectedChatFile.type;
                 }
-                await addDoc(collection(db, "chats", chatId, "messages"), { text: txt, uid: userNow.uid, user: userNow.displayName, time: serverTimestamp(), mediaUrl, mediaType });
+                await addDoc(collection(db, "chats", chatId, "messages"), { 
+                    text: txt, 
+                    uid: userNow.uid, 
+                    user: userNow.displayName, 
+                    time: serverTimestamp(),
+                    mediaUrl: mediaUrl,
+                    mediaType: mediaType
+                });
                 
-                if(activeChatUser.uid !== 'global_wwc') createNotification(activeChatUser.uid, 'message');
+                if(activeChatUser.uid !== 'global_wwc') {
+                    createNotification(activeChatUser.uid, 'message');
+                }
+
                 document.getElementById('chat-input').value = "";
                 clearChatFile();
-            } catch (e) { alert(e.message); } finally { btn.innerHTML = originalIcon; btn.disabled = false; }
+            } catch (e) {
+                alert("Message failed: " + e.message);
+            } finally {
+                btn.innerHTML = originalIcon;
+                btn.disabled = false;
+            }
         };
         window.closeChatMobile = () => document.getElementById('msg-window').classList.remove('open');
 
-        // --- UTILS ---
+        // --- PROFILE ---
+        window.openProfile = (uid) => {
+            if(!uid) uid = userNow.uid;
+            if(unsubscribeProfile) unsubscribeProfile();
+            nav('profile');
+            unsubscribeProfile = onSnapshot(doc(db, "users", uid), (s) => {
+                if(s.exists()){ 
+                    const d=s.data(); 
+                    currentProfileData = d; // Store for list modal
+                    
+                    document.getElementById('p-img').src=d.photo; 
+                    document.getElementById('p-name').innerText=d.name; 
+                    document.getElementById('p-bio').innerText=d.bio;
+                    document.getElementById('p-gender-display').innerText=d.gender || "";
+                    document.getElementById('p-followers').innerText=d.followers?d.followers.length:0;
+                    document.getElementById('p-following').innerText=d.following?d.following.length:0;
+                    
+                    const row = document.getElementById('p-action-row');
+                    if(uid === userNow.uid) {
+                        row.innerHTML = `<h2 class="p-username">${d.username}</h2><button class="btn-insta-edit" onclick="openEditModal()">Edit Profile</button><button class="btn-insta-edit">Archive</button><i class="fas fa-cog settings-cog" onclick="openSettings()"></i>`;
+                        document.getElementById('edit-name').value=d.name; 
+                        document.getElementById('edit-bio').value=d.bio;
+                        document.getElementById('edit-gender').value=d.gender || "";
+                    } else {
+                        const isFollowing = d.followers && d.followers.includes(userNow.uid);
+                        let btnHtml = isFollowing 
+                            ? `<button class="btn-insta-edit" onclick="unfollow('${d.uid}')">Following</button>`
+                            : `<button class="btn-insta-action" onclick="follow('${d.uid}')">Follow</button>`;
+                        
+                        row.innerHTML = `<h2 class="p-username">${d.username}</h2>${btnHtml}<button class="btn-insta-edit" onclick='nav("messages"); startPrivateChat(${JSON.stringify(d)})'>Message</button>`;
+                    }
+                }
+            });
+            onSnapshot(query(collection(db, "posts"), where("uid", "==", uid)), (s)=>{
+                const g=document.getElementById('p-grid'); g.innerHTML=''; 
+            });
+        };
+
         window.searchUsers = async () => {
             const val = document.getElementById('search-input').value.toLowerCase();
             const res = document.getElementById('search-results');
             if(val.length < 1) { res.innerHTML = ""; return; }
             const snap = await getDocs(collection(db, "users"));
             res.innerHTML = "";
-            snap.forEach(d => {
-                const u = d.data();
+            snap.forEach(docSnap => {
+                const u = docSnap.data();
+                if(u.uid === userNow.uid) return;
                 if (u.username.toLowerCase().includes(val) || u.name.toLowerCase().includes(val)) {
-                    res.innerHTML += `<div class="user-result" style="padding:10px; border-bottom:1px solid #333; cursor:pointer;" onclick="openProfile('${u.uid}')"><img src="${u.photo}" style="width:30px;height:30px;border-radius:50%;vertical-align:middle;margin-right:10px;">${u.username}</div>`;
+                    res.innerHTML += `<div class="user-result"><div class="u-info" onclick="openProfile('${u.uid}')"><img src="${u.photo}" class="u-pic"><div><b>${u.username}</b><br><small>${u.name}</small></div></div></div>`;
                 }
             });
         };
@@ -811,37 +1002,21 @@
         
         window.openSettings=()=>document.getElementById('settings-modal').style.display='flex';
         window.openEditModal=()=>document.getElementById('edit-modal').style.display='flex';
-        window.openListModal=async(t)=>{
-            if(!currentProfileData) return;
-            const l = t==='followers'?currentProfileData.followers:currentProfileData.following;
-            const c = document.getElementById('list-content');
-            document.getElementById('list-title').innerText=t.toUpperCase();
-            document.getElementById('list-modal').style.display='flex';
-            c.innerHTML='Loading...';
-            if(!l||l.length===0){c.innerHTML='Empty.';return;}
-            c.innerHTML='';
-            for(const uid of l){
-                const d = await getDoc(doc(db,"users",uid));
-                if(d.exists()){
-                    const u=d.data();
-                    c.innerHTML+=`<div style="padding:10px;border-bottom:1px solid #333;cursor:pointer;display:flex;align-items:center;gap:10px;" onclick="openProfile('${u.uid}');document.getElementById('list-modal').style.display='none'"><img src="${u.photo}" style="width:30px;height:30px;border-radius:50%;"><div>${u.username}</div></div>`;
-                }
-            }
-        };
-        let newAvi=null;
-        document.getElementById('file-up-avi').onchange=(e)=>{const r=new FileReader();r.readAsDataURL(e.target.files[0]);r.onload=(ev)=>newAvi=ev.target.result;};
+        let newAvi = null;
+        document.getElementById('file-up-avi').onchange = (e) => { const r = new FileReader(); r.readAsDataURL(e.target.files[0]); r.onload = (ev) => newAvi = ev.target.result; };
         window.saveProfile=async()=>{
             const n=document.getElementById('edit-name').value;
             const b=document.getElementById('edit-bio').value;
             const g=document.getElementById('edit-gender').value;
-            const d={name:n, bio:b, gender:g};
-            if(newAvi){d.photo=newAvi;await updateProfile(userNow,{photoURL:newAvi});}
-            await updateDoc(doc(db,"users",userNow.uid),d);
+            const d = {name:n, bio:b, gender:g};
+            if(newAvi) { d.photo = newAvi; await updateProfile(userNow, {photoURL:newAvi}); }
+            await updateDoc(doc(db,"users",userNow.uid), d);
             document.getElementById('edit-modal').style.display='none';
         };
 
         window.nav = (v, el) => {
-            if(v === 'profile' && !el) openProfile(userNow.uid);
+            if(v === 'profile' && !el) { /* Programmatic */ }
+            else if(v === 'profile' && el) { openProfile(userNow.uid); }
             document.querySelectorAll('.view-section').forEach(e => e.classList.add('hidden'));
             document.getElementById('view-'+v).classList.remove('hidden');
             if(el) { document.querySelectorAll('.nav-item').forEach(e=>e.classList.remove('active')); el.classList.add('active'); }
