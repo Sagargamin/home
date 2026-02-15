@@ -82,7 +82,7 @@
         .hero-title { font-family: 'Orbitron', sans-serif; font-size: 2.5rem; color: var(--primary); text-shadow: 0 0 20px rgba(0, 243, 255, 0.4); margin-bottom: 10px; font-weight: 900; letter-spacing: 2px; }
         .hero-sub { color: var(--text-grey); font-size: 1rem; letter-spacing: 1.5px; text-transform: uppercase; }
         
-        /* USER GRID (HOME) */
+        /* USER GRID */
         .feed-container { max-width: 800px; margin: 0 auto; padding: 20px; }
         .agent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
         .agent-card {
@@ -96,21 +96,13 @@
         .agent-btn { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 5px 15px; font-size: 12px; width: 100%; border-radius: 4px; transition: 0.2s; }
         .agent-btn:hover { background: var(--primary); color: #000; }
 
-        /* RIGHT SIDEBAR */
-        .right-sidebar { padding: 30px 20px; overflow-y: auto; }
-        .sugg-title { font-weight: bold; color: var(--text-grey); margin-bottom: 20px; font-size: 14px; }
-        .user-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
-        .u-info { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-        .u-pic { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); }
-        .u-btn { color: var(--primary); font-size: 12px; font-weight: bold; background: none; border: none; cursor: pointer; }
-
-        /* SEARCH VIEW */
+        /* SEARCH */
         #view-search { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
         .search-input { width: 100%; padding: 15px 20px; background: var(--surface); border: 1px solid var(--border); color: #fff; border-radius: 30px; font-size: 16px; outline: none; margin-bottom: 20px; }
         .search-input:focus { border-color: var(--primary); }
         .user-result { display: flex; align-items: center; justify-content: space-between; padding: 15px; border-bottom: 1px solid var(--border); }
         
-        /* NOTIFICATIONS VIEW */
+        /* NOTIFICATIONS */
         #view-notify { max-width: 600px; margin: 0 auto; padding: 20px; }
         .notif-header { font-family: 'Orbitron'; font-size: 1.5rem; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; color: var(--primary); }
         .notif-item { display: flex; align-items: center; gap: 15px; padding: 15px; border-bottom: 1px solid #1a1a1a; transition: 0.2s; }
@@ -228,6 +220,14 @@
         .profile-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
         .grid-post-wrap { position: relative; aspect-ratio: 1/1; cursor: pointer; overflow: hidden; }
         .grid-img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* RIGHT SIDEBAR */
+        .right-sidebar { padding: 30px 20px; overflow-y: auto; }
+        .sugg-title { font-weight: bold; color: var(--text-grey); margin-bottom: 20px; font-size: 14px; }
+        .user-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
+        .u-info { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .u-pic { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); }
+        .u-btn { color: var(--primary); font-size: 12px; font-weight: bold; background: none; border: none; cursor: pointer; }
 
         /* MOBILE */
         .mobile-nav { display: none; }
@@ -581,15 +581,19 @@
 
         // --- NOTIFICATIONS (REQUESTS LOGIC) ---
         function listenToNotifications() {
-            const q = query(collection(db, "notifications"), where("targetUid", "==", userNow.uid), orderBy("time", "desc"), limit(20));
+            // Simple query to avoid index errors (sorting in JS)
+            const q = query(collection(db, "notifications"), where("targetUid", "==", userNow.uid));
             onSnapshot(q, (snap) => {
                 const list = document.getElementById('notify-list');
                 list.innerHTML = "";
                 if(snap.empty) { list.innerHTML = `<div style="text-align:center;color:#555;padding:20px;">No activity yet.</div>`; return; }
                 
-                snap.forEach(d => {
-                    const n = d.data();
-                    const nid = d.id;
+                let notifs = [];
+                snap.forEach(d => notifs.push({id: d.id, ...d.data()}));
+                // Sort by time descending
+                notifs.sort((a,b) => b.time - a.time);
+
+                notifs.forEach(n => {
                     let actionHtml = "";
                     let contentText = "";
 
@@ -599,14 +603,15 @@
                         if(n.status === 'pending') {
                             actionHtml = `
                             <div class="notif-actions">
-                                <button class="btn-req-accept" onclick="respondRequest('${n.chatId}', '${nid}', 'accept')">Confirm</button>
-                                <button class="btn-req-deny" onclick="respondRequest('${n.chatId}', '${nid}', 'deny')">Delete</button>
+                                <button class="btn-req-accept" onclick="respondRequest('${n.chatId}', '${n.id}', 'accept')">Confirm</button>
+                                <button class="btn-req-deny" onclick="respondRequest('${n.chatId}', '${n.id}', 'deny')">Delete</button>
                             </div>`;
                         } else {
                             actionHtml = `<div style="font-size:11px; color:#555; margin-top:5px;">${n.status.toUpperCase()}</div>`;
                         }
                     } else if(n.type === 'follow') contentText = "started following you.";
                     else if(n.type === 'unfollow') contentText = "unfollowed you.";
+                    else if(n.type === 'message') contentText = "sent you a message.";
                     
                     list.innerHTML += `
                     <div class="notif-item">
@@ -751,6 +756,7 @@
                         const lastSeen = data.lastSeen ? data.lastSeen.toDate() : null;
                         const now = new Date();
                         const statusEl = document.getElementById('chat-header-status');
+                        
                         if(lastSeen && (now - lastSeen) < 120000) {
                             statusEl.innerHTML = '<span class="online-dot">●</span> Online';
                             statusEl.style.color = "#fff";
@@ -864,6 +870,13 @@
                     mediaType: mediaType
                 });
                 
+                // Notify if NOT WWC
+                if(activeChatUser.uid !== 'global_wwc') {
+                    // Check if already pending or accepted, maybe just send normal notification?
+                    // For now, simple logic:
+                    createNotification(activeChatUser.uid, 'message');
+                }
+
                 document.getElementById('chat-input').value = "";
                 clearChatFile();
             } catch (e) {
@@ -908,8 +921,22 @@
             });
             onSnapshot(query(collection(db, "posts"), where("uid", "==", uid)), (s)=>{
                 const g=document.getElementById('p-grid'); g.innerHTML=''; 
+                // Posts removed, keeping grid empty or for future use
             });
         };
+
+        // --- SEARCH & FOLLOW ACTIONS ---
+        async function loadSuggestions() {
+            const q = query(collection(db, "users"), limit(20));
+            const snap = await getDocs(q);
+            const list = document.getElementById('suggestions-list');
+            list.innerHTML = "";
+            snap.forEach(d => {
+                const u = d.data();
+                if(u.uid === userNow.uid) return;
+                list.innerHTML += `<div class="user-row"><div class="u-info" onclick="openProfile('${u.uid}')"><img src="${u.photo}" class="u-pic"><div><div style="font-weight:bold; font-size:13px;">${u.username}</div><div style="color:var(--text-grey); font-size:11px;">${u.name}</div></div></div><button class="u-btn" onclick="follow('${u.uid}')">Follow</button></div>`;
+            });
+        }
 
         window.searchUsers = async () => {
             const val = document.getElementById('search-input').value.toLowerCase();
