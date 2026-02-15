@@ -11,15 +11,14 @@
     <style>
         :root {
             --neon: #00f3ff;
+            --neon-dim: rgba(0, 243, 255, 0.1);
             --neon-purple: #bc13fe;
             --bg: #05070a;
-            --panel: #0f1219;
-            --sidebar: #0a0c12;
-            --input-bg: #1a1d26;
+            --panel: rgba(16, 24, 40, 0.6);
+            --sidebar: rgba(5, 7, 10, 0.9);
             --text: #e0e6ed;
             --danger: #ff2a2a;
             --success: #00ff88;
-            --warning: #ffcc00;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -27,100 +26,102 @@
         body {
             font-family: 'Rajdhani', sans-serif;
             background: var(--bg);
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
             color: var(--text);
             height: 100vh;
             overflow: hidden;
             display: flex;
         }
 
-        /* --- Login Overlay --- */
         #loginOverlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 999; display: flex;
             align-items: center; justify-content: center; flex-direction: column;
         }
         .login-box {
-            background: var(--panel); padding: 40px; border: 1px solid var(--neon);
-            border-radius: 10px; box-shadow: 0 0 30px rgba(0, 243, 255, 0.1);
-            text-align: center; width: 90%; max-width: 400px;
+            background: rgba(20,25,35,0.8); padding: 50px; border: 1px solid var(--neon);
+            border-radius: 15px; box-shadow: 0 0 50px rgba(0, 243, 255, 0.2);
+            text-align: center; width: 400px; backdrop-filter: blur(10px);
         }
-        .login-box input { width: 100%; padding: 10px; margin: 10px 0; background: #222; border: 1px solid #444; color: #fff; }
-        .login-btn { width: 100%; padding: 10px; background: var(--neon); font-weight: bold; border: none; cursor: pointer; }
+        .login-box input { 
+            width: 100%; padding: 15px; margin: 10px 0; background: rgba(0,0,0,0.5); 
+            border: 1px solid rgba(255,255,255,0.2); color: #fff; border-radius: 5px; outline: none;
+        }
+        .login-box input:focus { border-color: var(--neon); }
+        .login-btn { 
+            width: 100%; padding: 15px; background: linear-gradient(90deg, var(--neon), var(--neon-purple)); 
+            font-weight: bold; border: none; cursor: pointer; color: #000; margin-top: 20px;
+            font-family: 'Orbitron'; letter-spacing: 2px;
+        }
 
-        /* --- Dashboard Layout --- */
         #dashboard { display: none; width: 100%; height: 100%; display: flex; } 
 
-        /* Sidebar */
         .sidebar {
-            width: 260px; background: var(--sidebar); border-right: 1px solid #333;
-            display: flex; flex-direction: column; padding: 20px;
+            width: 280px; background: var(--sidebar); border-right: 1px solid rgba(255,255,255,0.1);
+            display: flex; flex-direction: column; padding: 30px; backdrop-filter: blur(20px);
         }
-        .brand { font-family: 'Orbitron'; font-size: 1.5rem; color: #fff; margin-bottom: 40px; text-align: center; letter-spacing: 2px; }
-        .brand span { color: var(--neon); }
-
+        .brand { font-family: 'Orbitron'; font-size: 2rem; color: #fff; margin-bottom: 50px; text-align: center; letter-spacing: 4px; text-shadow: 0 0 20px var(--neon); }
+        
         .nav-btn {
-            background: transparent; border: none; color: #8892b0; padding: 15px;
-            text-align: left; font-family: 'Rajdhani'; font-size: 1.1rem; cursor: pointer;
-            transition: 0.3s; border-radius: 8px; margin-bottom: 5px; display: flex; align-items: center; gap: 15px;
+            background: transparent; border: none; color: #8892b0; padding: 18px;
+            text-align: left; font-family: 'Rajdhani'; font-size: 1.2rem; cursor: pointer;
+            transition: 0.3s; border-radius: 8px; margin-bottom: 8px; display: flex; align-items: center; gap: 15px;
         }
-        .nav-btn:hover, .nav-btn.active { background: rgba(0, 243, 255, 0.1); color: var(--neon); }
-        .nav-btn i { width: 20px; text-align: center; }
-
-        /* Content */
-        .main-content { flex: 1; padding: 30px; overflow-y: auto; background: radial-gradient(circle at 90% 10%, rgba(0, 243, 255, 0.03) 0%, transparent 40%); }
+        .nav-btn:hover, .nav-btn.active { background: var(--neon-dim); color: var(--neon); box-shadow: 0 0 15px rgba(0,243,255,0.1); }
         
-        .view-section { display: none; animation: fadeIn 0.4s ease; }
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; position: relative; }
+        
+        .view-section { display: none; animation: fadeIn 0.5s ease; }
         .view-section.active-view { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        h2 { font-family: 'Orbitron'; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 20px; color: var(--neon); }
+        h2 { font-family: 'Orbitron'; border-bottom: 2px solid var(--neon); padding-bottom: 15px; margin-bottom: 30px; color: #fff; letter-spacing: 2px; display: inline-block; }
 
-        /* --- OVERVIEW GRAPHS & STATS --- */
-        .charts-row { display: flex; gap: 20px; margin-bottom: 30px; height: 300px; }
-        .chart-container { background: var(--panel); border: 1px solid #333; border-radius: 8px; padding: 15px; flex: 1; display: flex; align-items: center; justify-content: center; position: relative; }
-        
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .stat-card { background: var(--panel); padding: 20px; border: 1px solid #333; border-radius: 8px; text-align: center; position: relative; overflow: hidden; }
-        .stat-card::before { content:''; position: absolute; top:0; left:0; width: 4px; height: 100%; background: var(--neon); }
-        .stat-card.off::before { background: var(--danger); }
-        
-        .stat-num { font-size: 2.5rem; font-weight: bold; color: #fff; display: block; }
-        .stat-label { color: #888; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; }
-
-        /* --- USER LIST --- */
-        .data-list { display: flex; flex-direction: column; gap: 10px; }
-        .data-item { 
-            background: var(--panel); border: 1px solid #333; padding: 15px; border-radius: 6px; 
-            display: flex; align-items: center; justify-content: space-between;
+        .charts-row { display: flex; gap: 30px; margin-bottom: 40px; height: 350px; }
+        .chart-container { 
+            background: var(--panel); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; 
+            padding: 20px; flex: 1; display: flex; align-items: center; justify-content: center; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); backdrop-filter: blur(5px);
         }
-        .data-item:hover { border-color: var(--neon); }
         
-        .item-left { display: flex; align-items: center; gap: 15px; }
-        .item-img { width: 50px; height: 50px; border-radius: 5px; object-fit: cover; border: 1px solid #444; }
-        .item-info h4 { color: #fff; margin: 0; font-size: 1rem; }
-        .item-info p { color: #888; margin: 0; font-size: 0.8rem; font-family: monospace; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; margin-bottom: 40px; }
+        .stat-card { 
+            background: var(--panel); padding: 30px; border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 15px; text-align: center; position: relative; overflow: hidden;
+            transition: 0.3s; backdrop-filter: blur(5px);
+        }
+        .stat-card:hover { transform: translateY(-5px); border-color: var(--neon); box-shadow: 0 0 20px rgba(0,243,255,0.1); }
+        .stat-num { font-size: 3rem; font-weight: bold; color: #fff; display: block; margin-bottom: 5px; font-family: 'Orbitron'; }
+        .stat-label { color: #aaa; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 2px; }
 
-        .btn-view { background: rgba(0, 243, 255, 0.1); color: var(--neon); border: 1px solid var(--neon); padding: 5px 15px; border-radius: 4px; cursor: pointer; margin-right: 10px; }
-        .btn-view:hover { background: var(--neon); color: #000; }
-        .btn-del { background: rgba(255, 42, 42, 0.1); color: var(--danger); border: 1px solid var(--danger); padding: 5px 15px; border-radius: 4px; cursor: pointer; }
-        .btn-del:hover { background: var(--danger); color: #fff; }
+        .data-item { 
+            background: rgba(20,25,35,0.6); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; 
+            display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; transition: 0.2s;
+        }
+        .data-item:hover { border-color: var(--neon); background: rgba(0,243,255,0.05); }
+        
+        .item-left { display: flex; align-items: center; gap: 20px; }
+        .item-img { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; border: 2px solid rgba(255,255,255,0.1); }
+        .item-info h4 { color: #fff; margin: 0; font-size: 1.2rem; }
+        .item-info p { color: #888; margin: 5px 0 0 0; font-size: 0.9rem; font-family: monospace; }
 
-        /* Chat Monitor */
-        .chat-monitor { background: #000; border: 1px solid #333; height: 400px; overflow-y: auto; padding: 20px; border-radius: 8px; display: flex; flex-direction: column; gap: 10px; }
-        .chat-msg { background: #111; padding: 10px; border-radius: 5px; border-left: 3px solid var(--neon); display: flex; justify-content: space-between; }
-        .msg-meta { font-size: 0.8rem; color: var(--primary); margin-bottom: 5px; }
-        .msg-text { color: #ddd; }
+        .btn-view { background: transparent; color: var(--neon); border: 1px solid var(--neon); padding: 8px 20px; border-radius: 5px; cursor: pointer; font-family: 'Orbitron'; letter-spacing: 1px; transition: 0.2s; }
+        .btn-view:hover { background: var(--neon); color: #000; box-shadow: 0 0 15px var(--neon); }
+        .btn-del { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 8px 20px; border-radius: 5px; cursor: pointer; font-family: 'Orbitron'; letter-spacing: 1px; margin-left: 10px; transition: 0.2s; }
+        .btn-del:hover { background: var(--danger); color: #fff; box-shadow: 0 0 15px var(--danger); }
 
-        /* --- USER DETAIL MODAL --- */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; }
-        .dossier-box { background: #0a0c12; width: 500px; border: 1px solid var(--neon); padding: 0; position: relative; box-shadow: 0 0 50px rgba(0,243,255,0.2); }
-        .dossier-header { background: rgba(0,243,255,0.1); padding: 15px; border-bottom: 1px solid var(--neon); display: flex; justify-content: space-between; align-items: center; }
-        .dossier-body { padding: 20px; display: flex; gap: 20px; }
-        .dossier-img { width: 100px; height: 100px; border: 2px solid #333; object-fit: cover; }
-        .dossier-info { flex: 1; font-family: monospace; color: #0f0; line-height: 1.6; }
-        .dossier-label { color: #555; width: 80px; display: inline-block; }
-        .dossier-val { color: #fff; }
-        .close-btn { color: var(--danger); cursor: pointer; font-size: 20px; font-weight: bold; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .dossier-box { background: #0a0c12; width: 600px; border: 1px solid var(--neon); padding: 0; box-shadow: 0 0 50px rgba(0,243,255,0.2); }
+        .dossier-header { background: var(--neon-dim); padding: 20px; border-bottom: 1px solid var(--neon); display: flex; justify-content: space-between; align-items: center; color: #fff; font-family: 'Orbitron'; letter-spacing: 2px; font-size: 1.2rem; }
+        .dossier-body { padding: 30px; display: flex; gap: 30px; }
+        .dossier-img { width: 150px; height: 150px; border: 2px solid var(--neon); object-fit: cover; box-shadow: 0 0 20px var(--neon-dim); }
+        .dossier-info { flex: 1; font-family: monospace; color: var(--success); line-height: 1.8; font-size: 1.1rem; }
+        .dossier-label { color: #666; width: 100px; display: inline-block; }
+        .dossier-val { color: #fff; text-shadow: 0 0 5px rgba(255,255,255,0.5); }
+        .close-btn { color: var(--danger); cursor: pointer; font-size: 24px; }
 
     </style>
 </head>
@@ -128,11 +129,11 @@
 
     <div id="loginOverlay">
         <div class="login-box">
-            <h2 style="font-family:'Orbitron'; color:var(--neon); margin-bottom:20px;">CYBERHUB ADMIN</h2>
-            <input type="text" id="adm-user" placeholder="Admin ID">
-            <input type="password" id="adm-pass" placeholder="Passcode">
-            <button class="login-btn" onclick="adminLogin()">AUTHENTICATE</button>
-            <div id="loginMsg" style="color:red; margin-top:10px; display:none;">ACCESS DENIED</div>
+            <h2 style="font-family:'Orbitron'; color:var(--neon); margin-bottom:20px; font-size: 2rem;">COMMAND CENTER</h2>
+            <input type="text" id="adm-user" placeholder="OPERATOR ID">
+            <input type="password" id="adm-pass" placeholder="ACCESS CODE">
+            <button class="login-btn" onclick="adminLogin()">INITIALIZE</button>
+            <div id="loginMsg" style="color:red; margin-top:15px; display:none; font-family:monospace;">ACCESS DENIED // TERMINATING</div>
         </div>
     </div>
 
@@ -141,21 +142,36 @@
             <div class="brand">CYBER<span>HUB</span></div>
             
             <button class="nav-btn active" onclick="nav('overview')"><i class="fas fa-chart-line"></i> Overview</button>
-            <button class="nav-btn" onclick="nav('users')"><i class="fas fa-users"></i> Users</button>
-            <button class="nav-btn" onclick="nav('globalchat')"><i class="fas fa-comments"></i> Global Chat</button>
-            <button class="nav-btn" onclick="nav('reports')"><i class="fas fa-flag"></i> Reports</button>
+            <button class="nav-btn" onclick="nav('users')"><i class="fas fa-users"></i> User Database</button>
+            <button class="nav-btn" onclick="nav('globalchat')"><i class="fas fa-satellite-dish"></i> Global Feed</button>
+            <button class="nav-btn" onclick="nav('reports')"><i class="fas fa-shield-alt"></i> Security</button>
             <button class="nav-btn" onclick="nav('logs')"><i class="fas fa-terminal"></i> System Logs</button>
             
-            <button class="nav-btn" style="margin-top:auto; color:var(--danger);" onclick="adminLogout()">
-                <i class="fas fa-sign-out-alt"></i> Logout
+            <button class="nav-btn" style="margin-top:auto; color:var(--danger); border:1px solid rgba(255,0,0,0.2);" onclick="adminLogout()">
+                <i class="fas fa-power-off"></i> Terminate
             </button>
         </div>
 
         <div class="main-content">
             
             <div id="view-overview" class="view-section active-view">
-                <h2>SYSTEM METRICS</h2>
+                <h2>SYSTEM STATUS</h2>
                 
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-num" id="stat-total" style="color:var(--neon)">0</span>
+                        <span class="stat-label">TOTAL AGENTS</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-num" id="stat-online" style="color:var(--success)">0</span>
+                        <span class="stat-label">ACTIVE SIGNALS</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-num" id="stat-db" style="color:var(--neon-purple)">ONLINE</span>
+                        <span class="stat-label">GRID STATUS</span>
+                    </div>
+                </div>
+
                 <div class="charts-row">
                     <div class="chart-container">
                         <canvas id="trafficChart"></canvas>
@@ -164,49 +180,35 @@
                         <canvas id="userDistChart"></canvas>
                     </div>
                 </div>
-
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <span class="stat-num" id="stat-online" style="color:var(--success)">0</span>
-                        <span class="stat-label">Agents Online</span>
-                    </div>
-                    <div class="stat-card off">
-                        <span class="stat-num" id="stat-offline" style="color:var(--text-grey)">0</span>
-                        <span class="stat-label">Agents Offline</span>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-num" id="stat-total" style="color:var(--neon)">0</span>
-                        <span class="stat-label">Total Registered</span>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-num" id="stat-db" style="color:var(--neon-purple)">ONLINE</span>
-                        <span class="stat-label">Database Status</span>
-                    </div>
-                </div>
             </div>
 
             <div id="view-users" class="view-section">
                 <h2>USER DATABASE</h2>
-                <div id="users-list" class="data-list">Loading...</div>
+                <div id="users-list" class="data-list">Retrieving data...</div>
             </div>
 
             <div id="view-globalchat" class="view-section">
                 <h2>GLOBAL FREQUENCY (WWC)</h2>
-                <div id="wwc-monitor" class="chat-monitor">Loading live feed...</div>
+                <div id="wwc-monitor" class="data-list" style="height: 500px; overflow-y: scroll; border:1px solid #333; padding:20px; border-radius:10px;">Connecting...</div>
             </div>
 
             <div id="view-reports" class="view-section">
-                <h2>FLAGGED CONTENT</h2>
-                <div style="text-align:center; padding:50px; color:#555;">No active reports found. System clean.</div>
+                <h2>SECURITY FLAGS</h2>
+                <div style="text-align:center; padding:100px; color:#555; border:1px dashed #333; border-radius:10px;">
+                    <i class="fas fa-check-circle" style="font-size:50px; color:var(--success); margin-bottom:20px;"></i><br>
+                    NO ACTIVE THREATS DETECTED
+                </div>
             </div>
 
             <div id="view-logs" class="view-section">
-                <h2>SYSTEM LOGS</h2>
-                <div style="background:#000; padding:20px; font-family:monospace; color:#0f0; border:1px solid #333;">
-                    > System initialized...<br>
-                    > Database connection established.<br>
-                    > Admin session active.<br>
-                    > Monitoring traffic...
+                <h2>SYSTEM TERMINAL</h2>
+                <div style="background:#05070a; padding:30px; font-family:'Courier New', monospace; color:#0f0; border:1px solid var(--neon); border-radius:5px; box-shadow:0 0 20px rgba(0, 243, 255, 0.1);">
+                    <p>> Initializing CyberHub Admin Core v2.0...</p>
+                    <p>> Establishing secure connection to Firestore...</p>
+                    <p>> Handshake successful. Latency: 12ms</p>
+                    <p>> User authentication module loaded.</p>
+                    <p>> Monitoring traffic nodes...</p>
+                    <p class="blink">_</p>
                 </div>
             </div>
 
@@ -216,18 +218,17 @@
     <div id="user-modal" class="modal-overlay">
         <div class="dossier-box">
             <div class="dossier-header">
-                <span style="font-weight:bold; letter-spacing:1px;">USER DOSSIER</span>
+                <span>// CLASSIFIED DOSSIER</span>
                 <span class="close-btn" onclick="closeUserModal()">X</span>
             </div>
             <div class="dossier-body">
                 <img src="" id="dos-img" class="dossier-img">
                 <div class="dossier-info">
-                    <div><span class="dossier-label">NAME:</span> <span id="dos-name" class="dossier-val"></span></div>
-                    <div><span class="dossier-label">USER:</span> <span id="dos-user" class="dossier-val"></span></div>
-                    <div><span class="dossier-label">EMAIL:</span> <span id="dos-email" class="dossier-val"></span></div>
-                    <div><span class="dossier-label">UID:</span> <span id="dos-uid" class="dossier-val" style="font-size:10px;"></span></div>
-                    <div><span class="dossier-label">BIO:</span> <span id="dos-bio" class="dossier-val"></span></div>
-                    <div><span class="dossier-label">GENDER:</span> <span id="dos-gender" class="dossier-val"></span></div>
+                    <div><span class="dossier-label">CODENAME:</span> <span id="dos-user" class="dossier-val"></span></div>
+                    <div><span class="dossier-label">IDENTITY:</span> <span id="dos-name" class="dossier-val"></span></div>
+                    <div><span class="dossier-label">CONTACT:</span> <span id="dos-email" class="dossier-val"></span></div>
+                    <div><span class="dossier-label">UID:</span> <span id="dos-uid" class="dossier-val" style="font-size:10px; color:#888;"></span></div>
+                    <div><span class="dossier-label">BIO-DATA:</span> <span id="dos-bio" class="dossier-val"></span></div>
                     <br>
                     <div><span class="dossier-label">STATUS:</span> <span id="dos-status" class="dossier-val"></span></div>
                 </div>
@@ -237,7 +238,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, deleteDoc, doc, onSnapshot, query, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, deleteDoc, doc, onSnapshot, query, orderBy, getDoc, limit } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBGK533ImY8ePta_MAOTCq1aW4FjFhBusw",
@@ -251,7 +252,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- AUTHENTICATION ---
         window.adminLogin = () => {
             const u = document.getElementById('adm-user').value;
             const p = document.getElementById('adm-pass').value;
@@ -281,7 +281,6 @@
             renderCharts();
         }
 
-        // --- NAVIGATION ---
         window.nav = (view) => {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active-view'));
             document.getElementById('view-'+view).classList.add('active-view');
@@ -289,14 +288,10 @@
             event.currentTarget.classList.add('active');
         };
 
-        // --- DATA LOGIC ---
-
-        // 1. USERS LISTENER (Handles List & Overview Stats)
         function listenToUsers() {
             onSnapshot(collection(db, "users"), (snap) => {
                 const con = document.getElementById('users-list');
                 con.innerHTML = "";
-                
                 let total = 0;
                 let online = 0;
                 const now = new Date();
@@ -304,15 +299,10 @@
                 snap.forEach(d => {
                     const u = d.data();
                     total++;
-                    
-                    // Calc Online Status
                     let isOnline = false;
                     if(u.lastSeen) {
                         const diff = now - u.lastSeen.toDate();
-                        if(diff < 5 * 60 * 1000) { // 5 mins
-                            online++;
-                            isOnline = true;
-                        }
+                        if(diff < 5 * 60 * 1000) { online++; isOnline = true; }
                     }
 
                     con.innerHTML += `
@@ -320,28 +310,23 @@
                         <div class="item-left">
                             <img src="${u.photo}" class="item-img">
                             <div class="item-info">
-                                <h4>${u.name} <span style="color:var(--primary);">@${u.username}</span></h4>
+                                <h4>${u.name} <span style="color:var(--primary); font-size:0.8rem;">@${u.username}</span></h4>
                                 <p>UID: ${d.id}</p>
                             </div>
                         </div>
                         <div>
-                            <button class="btn-view" onclick="viewUser('${d.id}')">VIEW INTEL</button>
-                            <button class="btn-del" onclick="deleteItem('users', '${d.id}')">ERASE</button>
+                            <button class="btn-view" onclick="viewUser('${d.id}')">ACCESS INTEL</button>
+                            <button class="btn-del" onclick="deleteItem('users', '${d.id}')">PURGE</button>
                         </div>
                     </div>`;
                 });
 
-                // Update Overview Counters
                 document.getElementById('stat-total').innerText = total;
                 document.getElementById('stat-online').innerText = online;
-                document.getElementById('stat-offline').innerText = total - online;
-                
-                // Update Graph Data dynamically
                 updateCharts(online, total - online);
             });
         }
 
-        // 2. USER DETAILS MODAL
         window.viewUser = async (uid) => {
             const docRef = doc(db, "users", uid);
             const snap = await getDoc(docRef);
@@ -352,25 +337,21 @@
                 document.getElementById('dos-user').innerText = "@" + u.username;
                 document.getElementById('dos-email').innerText = u.email;
                 document.getElementById('dos-uid').innerText = u.uid;
-                document.getElementById('dos-bio').innerText = u.bio || "N/A";
-                document.getElementById('dos-gender').innerText = u.gender || "N/A";
+                document.getElementById('dos-bio').innerText = u.bio || "No data";
                 
-                // Status calculation
                 let status = "Offline";
                 if(u.lastSeen) {
                     const diff = new Date() - u.lastSeen.toDate();
-                    if(diff < 5 * 60 * 1000) status = "ONLINE (Active now)";
-                    else status = "Last seen: " + u.lastSeen.toDate().toLocaleString();
+                    if(diff < 5 * 60 * 1000) status = "ACTIVE SIGNAL";
+                    else status = u.lastSeen.toDate().toLocaleString();
                 }
                 document.getElementById('dos-status').innerText = status;
-
                 document.getElementById('user-modal').style.display = 'flex';
             }
         };
 
         window.closeUserModal = () => document.getElementById('user-modal').style.display = 'none';
 
-        // 3. GLOBAL CHAT (WWC)
         function listenToWWC() {
             onSnapshot(query(collection(db, "chats", "global_wwc", "messages"), orderBy("time", "desc"), limit(50)), (snap) => {
                 const con = document.getElementById('wwc-monitor');
@@ -378,65 +359,52 @@
                 snap.forEach(d => {
                     const m = d.data();
                     con.innerHTML += `
-                    <div class="chat-msg">
+                    <div class="data-item" style="padding:10px;">
                         <div>
-                            <div class="msg-meta">${m.user}</div>
-                            <div class="msg-text">${m.text || "[Media]"}</div>
+                            <span style="color:var(--primary); font-weight:bold;">${m.user}:</span> 
+                            <span style="color:#ccc;">${m.text || "[Encrypted Media]"}</span>
                         </div>
-                        <button class="btn-del" style="height:fit-content; padding:2px 8px; font-size:10px;" onclick="deleteSubItem('chats/global_wwc/messages', '${d.id}')">X</button>
+                        <button class="btn-del" style="padding:5px 10px; font-size:10px;" onclick="deleteSubItem('chats/global_wwc/messages', '${d.id}')">X</button>
                     </div>`;
                 });
             });
         }
 
-        // 4. CHARTS (Chart.js)
         let trafficChart, distChart;
-
         function renderCharts() {
-            // Traffic Chart (Mocked visual style)
+            Chart.defaults.color = '#888';
+            Chart.defaults.borderColor = '#333';
+            
             const ctx1 = document.getElementById('trafficChart').getContext('2d');
             trafficChart = new Chart(ctx1, {
                 type: 'line',
                 data: {
                     labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
                     datasets: [{
-                        label: 'Network Activity',
-                        data: [12, 19, 3, 5, 2, 3], // Placeholder data
+                        label: 'Network Load',
+                        data: [12, 19, 3, 5, 2, 3], 
                         borderColor: '#00f3ff',
                         backgroundColor: 'rgba(0, 243, 255, 0.1)',
                         borderWidth: 2,
-                        fill: true,
-                        tension: 0.4
+                        tension: 0.4,
+                        fill: true
                     }]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { ticks: { color: '#888' }, grid: { color: '#222' } },
-                        y: { ticks: { color: '#888' }, grid: { color: '#222' } }
-                    }
-                }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
 
-            // User Distribution Chart
             const ctx2 = document.getElementById('userDistChart').getContext('2d');
             distChart = new Chart(ctx2, {
                 type: 'doughnut',
                 data: {
                     labels: ['Online', 'Offline'],
                     datasets: [{
-                        data: [0, 0], // Will update dynamically
-                        backgroundColor: ['#00ff88', '#333'],
+                        data: [0, 0],
+                        backgroundColor: ['#00ff88', '#1a1d26'],
                         borderWidth: 0
                     }]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'right', labels: { color: '#fff' } } }
-                }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#fff' } } } }
             });
         }
 
@@ -447,24 +415,17 @@
             }
         }
 
-        // --- GLOBAL ACTIONS ---
         window.deleteItem = async (col, id) => {
-            if(confirm("WARNING: Permanent erasure of user data. Confirm?")) {
-                try {
-                    await deleteDoc(doc(db, col, id));
-                    alert("Target Erased.");
-                } catch(e) { alert(e.message); }
+            if(confirm("CONFIRM DATA PURGE?")) {
+                try { await deleteDoc(doc(db, col, id)); } catch(e) { alert(e.message); }
             }
         };
 
         window.deleteSubItem = async (path, id) => {
-            if(confirm("Remove this message?")) {
-                try {
-                    await deleteDoc(doc(db, path, id));
-                } catch(e) { alert(e.message); }
+            if(confirm("Remove packet?")) {
+                try { await deleteDoc(doc(db, path, id)); } catch(e) { alert(e.message); }
             }
         }
-
     </script>
 </body>
 </html>
