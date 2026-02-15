@@ -111,7 +111,7 @@
         .msg-header { padding: 20px; font-size: 20px; font-weight: bold; border-bottom: 1px solid var(--border); }
         .contact-list { flex: 1; overflow-y: auto; }
         
-        /* Contact Item & Delete Button */
+        /* Contact Item */
         .contact-item { 
             display: flex; align-items: center; gap: 15px; padding: 15px 20px; 
             cursor: pointer; transition: 0.2s; border-bottom: 1px solid #1a1a1a; 
@@ -122,20 +122,24 @@
         .delete-chat-btn {
             position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
             color: var(--text-grey); font-size: 14px; padding: 8px;
-            display: none; /* Hidden by default */ z-index: 5;
+            display: none; z-index: 5;
         }
         .contact-item:hover .delete-chat-btn { display: block; }
         .delete-chat-btn:hover { color: var(--danger); }
 
-        .c-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); }
-        .c-name { font-weight: 600; font-size: 14px; }
-        .c-user { font-size: 12px; color: var(--text-grey); }
+        .c-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); transition: 0.2s; }
+        .c-avatar:hover { border-color: var(--primary); transform: scale(1.05); }
+        
+        .c-name { font-weight: 600; font-size: 14px; color: #fff; }
+        /* LAST MESSAGE STYLE */
+        .c-user { font-size: 12px; color: #777; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 150px; height: 15px; }
+        .c-user.new { color: #fff; font-weight: bold; }
         
         .msg-window { flex: 1; display: flex; flex-direction: column; background: var(--surface); position: relative; }
         
         .chat-header-bar { 
             padding: 10px 20px; border-bottom: 1px solid var(--border); background: #080808; 
-            display: flex; align-items: center; gap: 15px;
+            display: flex; align-items: center; gap: 15px; cursor: pointer;
         }
         .header-info { display: flex; flex-direction: column; justify-content: center; }
         #chat-header-name { font-weight: bold; font-size: 16px; color: #fff; line-height: 1.2; }
@@ -316,7 +320,8 @@
                             <p>Select a chat to start messaging</p>
                         </div>
                         <div id="active-chat-ui" class="hidden" style="display: flex; flex-direction: column; height: 100%;">
-                            <div class="chat-header-bar">
+                            
+                            <div class="chat-header-bar" id="chat-main-header">
                                 <i class="fas fa-arrow-left back-btn" onclick="closeChatMobile()"></i>
                                 <img src="" id="chat-header-pic" style="width:40px; height:40px; border-radius:50%;">
                                 <div class="header-info">
@@ -324,6 +329,7 @@
                                     <span id="chat-header-status">Loading...</span>
                                 </div>
                             </div>
+
                             <div class="messages-feed" id="messages-feed"></div>
                             
                             <div id="file-preview-area">
@@ -465,7 +471,7 @@
         let activeChatUser = null;
         let unsubscribeChat = null;
         let unsubscribeUserStatus = null;
-        let unsubscribeProfile = null; // FIXED: Prevent listener leak
+        let unsubscribeProfile = null;
         let selectedChatFile = null;
         let selectedPostFile = null;
 
@@ -521,7 +527,7 @@
             loadMsgContacts();
         }
 
-        // --- NEW POST LOGIC (Fixed Stuck Loading) ---
+        // --- NEW POST LOGIC ---
         window.openPostModal = () => { document.getElementById('new-post-modal').style.display='flex'; };
         window.closePostModal = () => { 
             document.getElementById('new-post-modal').style.display='none';
@@ -583,17 +589,60 @@
             const q = query(collection(db, "users"), limit(50));
             onSnapshot(q, (snap) => {
                 const list = document.getElementById('contact-list');
-                let html = `<div class="contact-item" onclick="startPrivateChat({uid:'global_wwc', username:'WWC', name:'Global Chat', photo:'https://ui-avatars.com/api/?name=WWC&background=00f3ff&color=000'})"><img src="https://ui-avatars.com/api/?name=WWC&background=00f3ff&color=000" class="c-avatar"><div><div class="c-name">WWC</div><div class="c-user">Global Chat</div></div></div>`;
+                const users = [];
+                
+                // Add Global Chat First
+                users.push({uid: 'global_wwc', username: 'WWC', name: 'Global Chat', photo: 'https://ui-avatars.com/api/?name=WWC&background=00f3ff&color=000'});
+                
                 snap.forEach(docSnap => {
                     const u = docSnap.data();
-                    if(u.uid === userNow.uid) return;
-                    html += `<div class="contact-item" onclick='startPrivateChat(${JSON.stringify(u)})'>
-                                <img src="${u.photo}" class="c-avatar">
-                                <div><div class="c-name">${u.name || u.username}</div></div>
-                                <i class="fas fa-trash delete-chat-btn" onclick="deleteContactFromList(event, this)"></i>
-                             </div>`;
+                    if(u.uid !== userNow.uid) users.push(u);
                 });
-                list.innerHTML = html;
+
+                let htmlContent = "";
+                // Loop is needed to attach ID logic to string (simpler than full DOM build here)
+                users.forEach(u => {
+                    htmlContent += `
+                    <div class="contact-item" onclick='startPrivateChat(${JSON.stringify(u)})'>
+                        <img src="${u.photo}" class="c-avatar" onclick="event.stopPropagation(); openProfile('${u.uid}')">
+                        <div>
+                            <div class="c-name">${u.name || u.username}</div>
+                            <div class="c-user" id="last-msg-${u.uid}">Loading...</div>
+                        </div>
+                        <i class="fas fa-trash delete-chat-btn" onclick="deleteContactFromList(event, this)"></i>
+                    </div>`;
+                });
+                
+                list.innerHTML = htmlContent;
+
+                // Now attach listeners
+                users.forEach(u => {
+                    let chatId = (u.uid === 'global_wwc') ? 'global_wwc' : [userNow.uid, u.uid].sort().join("_");
+                    listenForLastMessage(chatId, `last-msg-${u.uid}`);
+                });
+            });
+        }
+
+        // New Helper to listen for last message of a specific chat
+        function listenForLastMessage(chatId, elementId) {
+            const q = query(collection(db, "chats", chatId, "messages"), orderBy("time", "desc"), limit(1));
+            onSnapshot(q, (snap) => {
+                const el = document.getElementById(elementId);
+                if(el) {
+                    if(!snap.empty) {
+                        const m = snap.docs[0].data();
+                        let text = m.text;
+                        if(!text && m.mediaUrl) text = "📎 Attachment";
+                        if(text.length > 20) text = text.substring(0, 18) + "...";
+                        
+                        const prefix = (m.uid === userNow.uid) ? "You: " : "";
+                        el.innerText = prefix + text;
+                        el.style.color = (m.uid !== userNow.uid) ? "#fff" : "#777";
+                        if(m.uid !== userNow.uid) el.style.fontWeight = "bold";
+                    } else {
+                        el.innerText = "Start a conversation";
+                    }
+                }
             });
         }
 
@@ -612,6 +661,11 @@
             document.getElementById('chat-header-name').innerText = targetUser.name || targetUser.username;
             document.getElementById('chat-header-pic').src = targetUser.photo;
             
+            // Header click navigates to profile
+            if(targetUser.uid !== 'global_wwc') {
+                document.getElementById('chat-main-header').onclick = () => openProfile(targetUser.uid);
+            }
+
             if(unsubscribeUserStatus) unsubscribeUserStatus();
             if(targetUser.uid !== 'global_wwc') {
                 unsubscribeUserStatus = onSnapshot(doc(db, "users", targetUser.uid), (docSnap) => {
@@ -733,11 +787,10 @@
         };
         window.closeChatMobile = () => document.getElementById('msg-window').classList.remove('open');
 
-        // --- PROFILE (FIXED LISTENER LEAK) ---
+        // --- PROFILE ---
         window.openProfile = (uid) => {
             if(!uid) uid = userNow.uid;
             
-            // Unsubscribe previous profile listener to avoid conflicts
             if(unsubscribeProfile) unsubscribeProfile();
             
             nav('profile');
