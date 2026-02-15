@@ -68,7 +68,7 @@
         .nav-item { display: flex; align-items: center; gap: 15px; padding: 15px; border-radius: 8px; color: var(--text); cursor: pointer; margin-bottom: 8px; }
         .nav-item:hover { background: rgba(0, 243, 255, 0.1); color: var(--primary); }
         .nav-item.active { font-weight: 700; color: var(--primary); }
-        .nav-item i { font-size: 22px; width: 30px; }
+        .nav-item i { font-size: 22px; width: 30px; text-align: center; }
 
         /* CONTENT */
         .content-area { overflow-y: scroll; position: relative; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
@@ -105,6 +105,16 @@
         .search-input:focus { border-color: var(--primary); }
         .user-result { display: flex; align-items: center; justify-content: space-between; padding: 15px; border-bottom: 1px solid var(--border); }
         
+        /* NOTIFICATIONS VIEW */
+        #view-notify { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .notif-header { font-family: 'Orbitron'; font-size: 1.5rem; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; color: var(--primary); }
+        .notif-item { display: flex; align-items: center; gap: 15px; padding: 15px; border-bottom: 1px solid #1a1a1a; transition: 0.2s; }
+        .notif-item:hover { background: #111; }
+        .notif-pic { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); }
+        .notif-text { font-size: 14px; color: #fff; flex: 1; }
+        .notif-time { font-size: 11px; color: var(--text-grey); }
+        .notif-highlight { color: var(--primary); font-weight: bold; }
+
         /* MESSAGES */
         #view-messages { display: flex; height: 100%; width: 100%; overflow: hidden; }
         .msg-sidebar { width: 35%; border-right: 1px solid var(--border); display: flex; flex-direction: column; background: #000; }
@@ -131,9 +141,7 @@
         .c-avatar:hover { border-color: var(--primary); transform: scale(1.05); }
         
         .c-name { font-weight: 600; font-size: 14px; color: #fff; }
-        /* LAST MESSAGE STYLE */
         .c-user { font-size: 12px; color: #777; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 150px; height: 15px; }
-        .c-user.new { color: #fff; font-weight: bold; }
         
         .msg-window { flex: 1; display: flex; flex-direction: column; background: var(--surface); position: relative; }
         
@@ -239,20 +247,6 @@
         .settings-list li:hover { background: #1a1a1a; padding-left: 20px; color: var(--primary); }
         .settings-list li:last-child { border-bottom: none; color: #ff3040; }
 
-        /* FLOATING ACTION BUTTON (NEW POST) */
-        .fab-btn {
-            position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
-            background: var(--primary); border-radius: 50%; display: flex;
-            align-items: center; justify-content: center; cursor: pointer;
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); z-index: 1000;
-            font-size: 30px; color: #000; transition: 0.2s;
-        }
-        .fab-btn:hover { transform: scale(1.1); }
-        @media (max-width: 800px) { .fab-btn { bottom: 80px; right: 20px; width: 50px; height: 50px; font-size: 24px; } }
-
-        /* NEW POST MODAL PREVIEW */
-        .new-post-preview { max-width: 100%; max-height: 300px; object-fit: contain; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--border); display: none; }
-
     </style>
 </head>
 <body>
@@ -286,6 +280,7 @@
                 <div class="logo cyber-font">CYBERHUB</div>
                 <div class="nav-item active" onclick="nav('home', this)"><i class="fas fa-home"></i> <span>Home</span></div>
                 <div class="nav-item" onclick="nav('search', this)"><i class="fas fa-search"></i> <span>Search</span></div>
+                <div class="nav-item" onclick="nav('notify', this)"><i class="fas fa-bell"></i> <span>Notify</span></div>
                 <div class="nav-item" onclick="nav('messages', this)"><i class="fas fa-envelope"></i> <span>Messages</span></div>
                 <div class="nav-item" onclick="nav('profile', this)"><i class="fas fa-user"></i> <span>Profile</span></div>
                 <div class="nav-item" onclick="openSettings()" style="margin-top:auto;"><i class="fas fa-bars"></i> <span>More</span></div>
@@ -304,6 +299,13 @@
                 <div id="view-search" class="view-section hidden">
                     <input type="text" class="search-input" id="search-input" placeholder="Search users..." onkeyup="searchUsers()">
                     <div id="search-results"></div>
+                </div>
+
+                <div id="view-notify" class="view-section hidden">
+                    <div class="notif-header">ACTIVITY</div>
+                    <div id="notify-list">
+                        <div style="text-align:center;color:#555;">No notifications yet.</div>
+                    </div>
                 </div>
 
                 <div id="view-messages" class="view-section hidden">
@@ -385,32 +387,9 @@
         <div class="mobile-nav">
             <i class="fas fa-home" style="color:#fff; font-size:24px;" onclick="nav('home')"></i>
             <i class="fas fa-search" style="color:#fff; font-size:24px;" onclick="nav('search')"></i>
+            <i class="fas fa-bell" style="color:#fff; font-size:24px;" onclick="nav('notify')"></i>
             <i class="fas fa-envelope" style="color:#fff; font-size:24px;" onclick="nav('messages')"></i>
             <i class="fas fa-user" style="color:#fff; font-size:24px;" onclick="nav('profile')"></i>
-        </div>
-
-        <div class="fab-btn" onclick="openPostModal()">
-            <i class="fas fa-plus"></i>
-        </div>
-    </div>
-
-    <div id="new-post-modal" class="modal-overlay">
-        <div class="modal-box" style="width: 500px;">
-            <h3 style="margin-bottom: 20px; color:var(--primary);">INITIATE TRANSMISSION</h3>
-            
-            <label for="post-file-input" class="btn" style="background:#333; color:#fff; padding:10px 20px; display:inline-block; margin-bottom:20px;">
-                <i class="fas fa-camera"></i> Select Image Data
-            </label>
-            <input type="file" id="post-file-input" hidden accept="image/*">
-            
-            <img src="" id="new-post-preview-img" class="new-post-preview">
-            
-            <input type="text" id="post-caption" class="auth-input" placeholder="Enter Title / Caption..." style="margin-bottom: 20px;">
-            
-            <div style="display:flex; gap:10px;">
-                <button class="auth-btn btn" onclick="createPost()">TRANSMIT</button>
-                <button class="btn" style="background:#333; color:#fff; flex:1;" onclick="closePostModal()">CANCEL</button>
-            </div>
         </div>
     </div>
 
@@ -450,7 +429,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, updateDoc, doc, setDoc, where, getDocs, arrayUnion, limit } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, updateDoc, doc, setDoc, where, getDocs, arrayUnion, arrayRemove, limit } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
 
         const firebaseConfig = {
@@ -473,7 +452,6 @@
         let unsubscribeUserStatus = null;
         let unsubscribeProfile = null;
         let selectedChatFile = null;
-        let selectedPostFile = null;
 
         // AUTH
         window.login = async () => { try { await signInWithEmailAndPassword(auth, document.getElementById('l-email').value, document.getElementById('l-pass').value); } catch(e) { alert(e.message); } };
@@ -488,7 +466,7 @@
                 const cred = await createUserWithEmailAndPassword(auth, email, pass);
                 const pic = `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`;
                 await updateProfile(cred.user, { displayName: username, photoURL: pic });
-                await setDoc(doc(db, "users", cred.user.uid), { uid: cred.user.uid, name: name, username: username, photo: pic, email: email, bio: "CyberHub Agent", gender:"", followers: [], lastSeen: serverTimestamp() });
+                await setDoc(doc(db, "users", cred.user.uid), { uid: cred.user.uid, name: name, username: username, photo: pic, email: email, bio: "CyberHub Agent", gender:"", followers: [], following: [], lastSeen: serverTimestamp() });
                 location.reload();
             } catch(e) { alert(e.message); document.getElementById('loader').style.display='none'; }
         };
@@ -525,105 +503,77 @@
             });
             loadSuggestions();
             loadMsgContacts();
+            listenToNotifications();
         }
 
-        // --- NEW POST LOGIC ---
-        window.openPostModal = () => { document.getElementById('new-post-modal').style.display='flex'; };
-        window.closePostModal = () => { 
-            document.getElementById('new-post-modal').style.display='none';
-            document.getElementById('post-file-input').value = "";
-            document.getElementById('post-caption').value = "";
-            document.getElementById('new-post-preview-img').style.display = 'none';
-            document.getElementById('new-post-preview-img').src = "";
-            selectedPostFile = null;
-        };
-
-        document.getElementById('post-file-input').onchange = (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            if (!file.type.startsWith('image/')) { alert("Only image data accepted."); e.target.value = ""; return; }
-            if (file.size > 5 * 1024 * 1024) { alert("File too large. Max 5MB."); e.target.value = ""; return; }
-            selectedPostFile = file;
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                const img = document.getElementById('new-post-preview-img');
-                img.src = ev.target.result;
-                img.style.display = 'block';
-            };
-            reader.readAsDataURL(file);
-        };
-
-        window.createPost = async () => {
-            const caption = document.getElementById('post-caption').value;
-            if(!selectedPostFile) { alert("Image data required."); return; }
-            if(!caption) { alert("Title/Caption required."); return; }
-
-            document.getElementById('loader').style.display='flex';
-            try {
-                const storageRef = ref(storage, `posts/${userNow.uid}/${Date.now()}_${selectedPostFile.name}`);
-                await uploadBytes(storageRef, selectedPostFile);
-                const downloadURL = await getDownloadURL(storageRef);
-
-                await addDoc(collection(db, "posts"), {
-                    uid: userNow.uid,
-                    user: userNow.displayName,
-                    avatar: userNow.photoURL,
-                    img: downloadURL,
-                    cap: caption,
-                    time: serverTimestamp(),
-                    likes: []
+        // --- NOTIFICATIONS SYSTEM ---
+        function listenToNotifications() {
+            // Listen for notifications where target is me
+            const q = query(collection(db, "notifications"), where("targetUid", "==", userNow.uid), orderBy("time", "desc"), limit(20));
+            onSnapshot(q, (snap) => {
+                const list = document.getElementById('notify-list');
+                list.innerHTML = "";
+                if(snap.empty) {
+                    list.innerHTML = `<div style="text-align:center;color:#555;padding:20px;">No activity yet.</div>`;
+                    return;
+                }
+                snap.forEach(d => {
+                    const n = d.data();
+                    let actionText = "";
+                    if(n.type === 'follow') actionText = "started following you.";
+                    if(n.type === 'unfollow') actionText = "unfollowed you.";
+                    if(n.type === 'message') actionText = "sent you a message.";
+                    
+                    list.innerHTML += `
+                    <div class="notif-item">
+                        <img src="${n.actorPic}" class="notif-pic">
+                        <div class="notif-text">
+                            <span class="notif-highlight">${n.actorName}</span> ${actionText}
+                        </div>
+                    </div>`;
                 });
+            });
+        }
 
-                closePostModal();
-                nav('home');
-            } catch (error) {
-                console.error("Upload failed:", error);
-                alert("Upload Failed: " + error.message + "\nCheck console for details.");
-            } finally {
-                document.getElementById('loader').style.display='none';
-            }
-        };
+        async function createNotification(targetUid, type) {
+            if(targetUid === userNow.uid) return; // Don't notify self
+            await addDoc(collection(db, "notifications"), {
+                targetUid: targetUid,
+                type: type,
+                actorUid: userNow.uid,
+                actorName: userNow.displayName,
+                actorPic: userNow.photoURL,
+                time: serverTimestamp()
+            });
+        }
 
         // --- MESSAGES ---
         function loadMsgContacts() {
             const q = query(collection(db, "users"), limit(50));
             onSnapshot(q, (snap) => {
                 const list = document.getElementById('contact-list');
-                const users = [];
-                
-                // Add Global Chat First
-                users.push({uid: 'global_wwc', username: 'WWC', name: 'Global Chat', photo: 'https://ui-avatars.com/api/?name=WWC&background=00f3ff&color=000'});
-                
+                let html = `<div class="contact-item" onclick="startPrivateChat({uid:'global_wwc', username:'WWC', name:'Global Chat', photo:'https://ui-avatars.com/api/?name=WWC&background=00f3ff&color=000'})"><img src="https://ui-avatars.com/api/?name=WWC&background=00f3ff&color=000" class="c-avatar"><div><div class="c-name">WWC</div><div class="c-user">Global Chat</div></div></div>`;
                 snap.forEach(docSnap => {
                     const u = docSnap.data();
-                    if(u.uid !== userNow.uid) users.push(u);
+                    if(u.uid !== userNow.uid) {
+                        html += `<div class="contact-item" onclick='startPrivateChat(${JSON.stringify(u)})'>
+                                    <img src="${u.photo}" class="c-avatar" onclick="event.stopPropagation(); openProfile('${u.uid}')">
+                                    <div><div class="c-name">${u.name || u.username}</div><div class="c-user" id="last-msg-${u.uid}">Loading...</div></div>
+                                    <i class="fas fa-trash delete-chat-btn" onclick="deleteContactFromList(event, this)"></i>
+                                 </div>`;
+                    }
                 });
-
-                let htmlContent = "";
-                // Loop is needed to attach ID logic to string (simpler than full DOM build here)
-                users.forEach(u => {
-                    htmlContent += `
-                    <div class="contact-item" onclick='startPrivateChat(${JSON.stringify(u)})'>
-                        <img src="${u.photo}" class="c-avatar" onclick="event.stopPropagation(); openProfile('${u.uid}')">
-                        <div>
-                            <div class="c-name">${u.name || u.username}</div>
-                            <div class="c-user" id="last-msg-${u.uid}">Loading...</div>
-                        </div>
-                        <i class="fas fa-trash delete-chat-btn" onclick="deleteContactFromList(event, this)"></i>
-                    </div>`;
-                });
-                
-                list.innerHTML = htmlContent;
-
-                // Now attach listeners
-                users.forEach(u => {
-                    let chatId = (u.uid === 'global_wwc') ? 'global_wwc' : [userNow.uid, u.uid].sort().join("_");
-                    listenForLastMessage(chatId, `last-msg-${u.uid}`);
+                list.innerHTML = html;
+                snap.forEach(docSnap => {
+                    const u = docSnap.data();
+                    if(u.uid !== userNow.uid) {
+                        let chatId = [userNow.uid, u.uid].sort().join("_");
+                        listenForLastMessage(chatId, `last-msg-${u.uid}`);
+                    }
                 });
             });
         }
 
-        // New Helper to listen for last message of a specific chat
         function listenForLastMessage(chatId, elementId) {
             const q = query(collection(db, "chats", chatId, "messages"), orderBy("time", "desc"), limit(1));
             onSnapshot(q, (snap) => {
@@ -634,7 +584,6 @@
                         let text = m.text;
                         if(!text && m.mediaUrl) text = "📎 Attachment";
                         if(text.length > 20) text = text.substring(0, 18) + "...";
-                        
                         const prefix = (m.uid === userNow.uid) ? "You: " : "";
                         el.innerText = prefix + text;
                         el.style.color = (m.uid !== userNow.uid) ? "#fff" : "#777";
@@ -661,7 +610,6 @@
             document.getElementById('chat-header-name').innerText = targetUser.name || targetUser.username;
             document.getElementById('chat-header-pic').src = targetUser.photo;
             
-            // Header click navigates to profile
             if(targetUser.uid !== 'global_wwc') {
                 document.getElementById('chat-main-header').onclick = () => openProfile(targetUser.uid);
             }
@@ -674,7 +622,6 @@
                         const lastSeen = data.lastSeen ? data.lastSeen.toDate() : null;
                         const now = new Date();
                         const statusEl = document.getElementById('chat-header-status');
-                        
                         if(lastSeen && (now - lastSeen) < 120000) {
                             statusEl.innerHTML = '<span class="online-dot">●</span> Online';
                             statusEl.style.color = "#fff";
@@ -699,7 +646,6 @@
                     const m = docSnap.data();
                     const cls = m.uid === userNow.uid ? 'msg-mine' : 'msg-other';
                     const nameTag = (targetUser.uid === 'global_wwc' && m.uid !== userNow.uid) ? `<div class="msg-username">${m.user}</div>` : '';
-                    
                     let content = '';
                     if(m.mediaUrl) {
                         if(m.mediaType && m.mediaType.startsWith('image/')) {
@@ -711,10 +657,8 @@
                     } else {
                         content = m.text;
                     }
-
                     let timeStr = "";
                     if(m.time) { timeStr = formatTime(m.time.toDate()); }
-
                     feed.innerHTML += `<div class="msg-bubble ${cls}">${nameTag}${content}<div class="msg-time">${timeStr}</div></div>`;
                 });
                 feed.scrollTop = feed.scrollHeight;
@@ -748,17 +692,14 @@
         window.sendPrivateMsg = async () => {
             const txt = document.getElementById('chat-input').value;
             if((!txt && !selectedChatFile) || !activeChatUser) return;
-            
             const btn = document.getElementById('send-msg-btn');
             const originalIcon = btn.innerHTML;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
             btn.disabled = true;
-
             try {
                 let chatId = (activeChatUser.uid === 'global_wwc') ? 'global_wwc' : [userNow.uid, activeChatUser.uid].sort().join("_");
                 let mediaUrl = null;
                 let mediaType = null;
-
                 if(selectedChatFile) {
                     if (selectedChatFile.size > 5 * 1024 * 1024) { throw new Error("File too large. Max 5MB."); }
                     const storageRef = ref(storage, `chat_files/${chatId}/${Date.now()}_${selectedChatFile.name}`);
@@ -766,7 +707,6 @@
                     mediaUrl = await getDownloadURL(storageRef);
                     mediaType = selectedChatFile.type;
                 }
-
                 await addDoc(collection(db, "chats", chatId, "messages"), { 
                     text: txt, 
                     uid: userNow.uid, 
@@ -775,6 +715,11 @@
                     mediaUrl: mediaUrl,
                     mediaType: mediaType
                 });
+                
+                // NOTIFY USER
+                if(activeChatUser.uid !== 'global_wwc') {
+                    createNotification(activeChatUser.uid, 'message');
+                }
 
                 document.getElementById('chat-input').value = "";
                 clearChatFile();
@@ -787,14 +732,11 @@
         };
         window.closeChatMobile = () => document.getElementById('msg-window').classList.remove('open');
 
-        // --- PROFILE ---
+        // --- PROFILE (DYNAMIC FOLLOW) ---
         window.openProfile = (uid) => {
             if(!uid) uid = userNow.uid;
-            
             if(unsubscribeProfile) unsubscribeProfile();
-            
             nav('profile');
-            
             unsubscribeProfile = onSnapshot(doc(db, "users", uid), (s) => {
                 if(s.exists()){ 
                     const d=s.data(); 
@@ -812,20 +754,23 @@
                         document.getElementById('edit-bio').value=d.bio;
                         document.getElementById('edit-gender').value=d.gender || "";
                     } else {
-                        row.innerHTML = `<h2 class="p-username">${d.username}</h2><button class="btn-insta-action" onclick="follow('${d.uid}')">Follow</button><button class="btn-insta-edit" onclick='nav("messages"); startPrivateChat(${JSON.stringify(d)})'>Message</button>`;
+                        // CHECK IF FOLLOWING
+                        const isFollowing = d.followers && d.followers.includes(userNow.uid);
+                        let btnHtml = isFollowing 
+                            ? `<button class="btn-insta-edit" onclick="unfollow('${d.uid}')">Following</button>`
+                            : `<button class="btn-insta-action" onclick="follow('${d.uid}')">Follow</button>`;
+                        
+                        row.innerHTML = `<h2 class="p-username">${d.username}</h2>${btnHtml}<button class="btn-insta-edit" onclick='nav("messages"); startPrivateChat(${JSON.stringify(d)})'>Message</button>`;
                     }
-                } else {
-                    alert("User not found!");
                 }
             });
-            
             onSnapshot(query(collection(db, "posts"), where("uid", "==", uid)), (s)=>{
                 const g=document.getElementById('p-grid'); g.innerHTML=''; document.getElementById('p-post-count').innerText=s.size;
                 s.forEach(d=>g.innerHTML+=`<div class="grid-post-wrap"><img src="${d.data().img}" class="grid-img"></div>`);
             });
         };
 
-        // --- SEARCH & FOLLOW ---
+        // --- SEARCH & FOLLOW ACTIONS ---
         async function loadSuggestions() {
             const q = query(collection(db, "users"), limit(20));
             const snap = await getDocs(q);
@@ -853,7 +798,24 @@
             });
         };
 
-        window.follow = async(id)=>{try{await updateDoc(doc(db,"users",userNow.uid),{following:arrayUnion(id)});await updateDoc(doc(db,"users",id),{followers:arrayUnion(userNow.uid)});alert("Followed!");}catch(e){alert(e.message)}};
+        // FOLLOW LOGIC (WITH NOTIFICATION)
+        window.follow = async(id) => {
+            try {
+                await updateDoc(doc(db,"users",userNow.uid),{following:arrayUnion(id)});
+                await updateDoc(doc(db,"users",id),{followers:arrayUnion(userNow.uid)});
+                createNotification(id, 'follow');
+            } catch(e) { console.error(e); }
+        };
+
+        // UNFOLLOW LOGIC (WITH NOTIFICATION)
+        window.unfollow = async(id) => {
+            try {
+                await updateDoc(doc(db,"users",userNow.uid),{following:arrayRemove(id)});
+                await updateDoc(doc(db,"users",id),{followers:arrayRemove(userNow.uid)});
+                createNotification(id, 'unfollow');
+            } catch(e) { console.error(e); }
+        };
+
         window.like = async(pid)=>{const r=doc(db,"posts",pid);const s=await getDoc(r);const l=s.data().likes||[];if(l.includes(userNow.uid)){await updateDoc(r,{likes:arrayRemove(userNow.uid)})}else{await updateDoc(r,{likes:arrayUnion(userNow.uid)})}};
         
         window.openSettings=()=>document.getElementById('settings-modal').style.display='flex';
