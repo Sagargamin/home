@@ -421,7 +421,7 @@
         let activeChatUser = null;
         let unsubscribeChat = null;
         let selectedChatFile = null;
-        let selectedPostFile = null; // For new posts
+        let selectedPostFile = null;
 
         // AUTH
         window.login = async () => { try { await signInWithEmailAndPassword(auth, document.getElementById('l-email').value, document.getElementById('l-pass').value); } catch(e) { alert(e.message); } };
@@ -464,7 +464,7 @@
             loadMsgContacts();
         }
 
-        // --- NEW POST LOGIC ---
+        // --- NEW POST LOGIC (Fixed Error Handling) ---
         window.openPostModal = () => { document.getElementById('new-post-modal').style.display='flex'; };
         window.closePostModal = () => { 
             document.getElementById('new-post-modal').style.display='none';
@@ -478,7 +478,6 @@
         document.getElementById('post-file-input').onchange = (e) => {
             const file = e.target.files[0];
             if (!file) return;
-            // Double check it's an image
             if (!file.type.startsWith('image/')) {
                 alert("Only image data accepted.");
                 e.target.value = "";
@@ -501,12 +500,10 @@
 
             document.getElementById('loader').style.display='flex';
             try {
-                // 1. Upload Image
                 const storageRef = ref(storage, `posts/${userNow.uid}/${Date.now()}_${selectedPostFile.name}`);
                 await uploadBytes(storageRef, selectedPostFile);
                 const downloadURL = await getDownloadURL(storageRef);
 
-                // 2. Save Post to Firestore
                 await addDoc(collection(db, "posts"), {
                     uid: userNow.uid,
                     user: userNow.displayName,
@@ -518,16 +515,15 @@
                 });
 
                 closePostModal();
-                nav('home'); // Go to home feed to see new post
+                nav('home');
             } catch (error) {
-                alert("Transmission Failed: " + error.message);
+                alert("Upload Failed: " + error.message + "\n(Enable Storage in Firebase Console!)");
             } finally {
                 document.getElementById('loader').style.display='none';
             }
         };
 
-
-        // --- MESSAGES (WITH FILES) ---
+        // --- MESSAGES (With Upload Fix) ---
         function loadMsgContacts() {
             const q = query(collection(db, "users"), limit(50));
             onSnapshot(q, (snap) => {
@@ -598,30 +594,40 @@
             const txt = document.getElementById('chat-input').value;
             if((!txt && !selectedChatFile) || !activeChatUser) return;
             
-            let chatId = (activeChatUser.uid === 'global_wwc') ? 'global_wwc' : [userNow.uid, activeChatUser.uid].sort().join("_");
-            
-            let mediaUrl = null;
-            let mediaType = null;
+            const btn = document.querySelector('.chat-input-zone button');
+            const originalText = btn.innerText;
+            btn.innerText = "...";
+            btn.disabled = true;
 
-            if(selectedChatFile) {
-                // Upload File
-                const storageRef = ref(storage, `chat_files/${chatId}/${Date.now()}_${selectedChatFile.name}`);
-                await uploadBytes(storageRef, selectedChatFile);
-                mediaUrl = await getDownloadURL(storageRef);
-                mediaType = selectedChatFile.type;
+            try {
+                let chatId = (activeChatUser.uid === 'global_wwc') ? 'global_wwc' : [userNow.uid, activeChatUser.uid].sort().join("_");
+                let mediaUrl = null;
+                let mediaType = null;
+
+                if(selectedChatFile) {
+                    const storageRef = ref(storage, `chat_files/${chatId}/${Date.now()}_${selectedChatFile.name}`);
+                    await uploadBytes(storageRef, selectedChatFile);
+                    mediaUrl = await getDownloadURL(storageRef);
+                    mediaType = selectedChatFile.type;
+                }
+
+                await addDoc(collection(db, "chats", chatId, "messages"), { 
+                    text: txt, 
+                    uid: userNow.uid, 
+                    user: userNow.displayName, 
+                    time: serverTimestamp(),
+                    mediaUrl: mediaUrl,
+                    mediaType: mediaType
+                });
+
+                document.getElementById('chat-input').value = "";
+                clearChatFile();
+            } catch (e) {
+                alert("Message failed: " + e.message + "\n(Enable Storage in Firebase Console!)");
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
             }
-
-            await addDoc(collection(db, "chats", chatId, "messages"), { 
-                text: txt, 
-                uid: userNow.uid, 
-                user: userNow.displayName, 
-                time: serverTimestamp(),
-                mediaUrl: mediaUrl,
-                mediaType: mediaType
-            });
-
-            document.getElementById('chat-input').value = "";
-            clearChatFile();
         };
         window.closeChatMobile = () => document.getElementById('msg-window').classList.remove('open');
 
