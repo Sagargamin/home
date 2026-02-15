@@ -72,35 +72,14 @@
         /* CONTENT */
         .content-area { overflow-y: scroll; position: relative; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
         
-        /* HOME HERO SECTION (NEW) */
+        /* HOME HERO */
         .hero-section {
-            text-align: center;
-            padding: 60px 20px 40px 20px;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 20px;
+            text-align: center; padding: 60px 20px 40px 20px; border-bottom: 1px solid var(--border); margin-bottom: 20px;
             background: linear-gradient(180deg, rgba(0, 243, 255, 0.05) 0%, rgba(0,0,0,0) 100%);
         }
-        .hero-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2.5rem;
-            color: var(--primary);
-            text-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
-            margin-bottom: 10px;
-            font-weight: 900;
-            letter-spacing: 2px;
-        }
-        .hero-sub {
-            color: var(--text-grey);
-            font-size: 1rem;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-        }
-        .empty-feed {
-            text-align: center;
-            padding: 50px;
-            color: var(--text-grey);
-            font-family: 'Orbitron', sans-serif;
-        }
+        .hero-title { font-family: 'Orbitron', sans-serif; font-size: 2.5rem; color: var(--primary); text-shadow: 0 0 20px rgba(0, 243, 255, 0.4); margin-bottom: 10px; font-weight: 900; letter-spacing: 2px; }
+        .hero-sub { color: var(--text-grey); font-size: 1rem; letter-spacing: 1.5px; text-transform: uppercase; }
+        .empty-feed { text-align: center; padding: 50px; color: var(--text-grey); font-family: 'Orbitron', sans-serif; }
 
         /* FEED */
         .feed-container { max-width: 500px; margin: 0 auto; padding: 20px; }
@@ -139,16 +118,26 @@
         .chat-header-bar { padding: 15px 20px; border-bottom: 1px solid var(--border); background: #080808; display: flex; align-items: center; gap: 15px; font-weight: bold; font-size: 16px; }
         .back-btn { display: none; font-size: 20px; cursor: pointer; }
         .messages-feed { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 8px; }
+        
         .msg-bubble { padding: 10px 16px; border-radius: 20px; max-width: 70%; font-size: 14px; word-wrap: break-word; position: relative; }
         .msg-mine { align-self: flex-end; background: var(--primary); color: #000; border-bottom-right-radius: 4px; }
         .msg-other { align-self: flex-start; background: #262626; color: #fff; border-bottom-left-radius: 4px; }
-        .msg-username { font-size: 10px; color: var(--primary); margin-bottom: 2px; }
-        .chat-input-zone { padding: 15px; background: #000; border-top: 1px solid var(--border); display: flex; gap: 10px; }
+        .msg-username { font-size: 10px; color: var(--primary); margin-bottom: 2px; font-weight: bold;}
+        .msg-image { max-width: 200px; border-radius: 8px; margin-top: 5px; cursor: pointer; border: 1px solid #444; }
+        .msg-file-link { color: #fff; text-decoration: underline; display: block; margin-top: 5px; font-size: 12px; }
+
+        .chat-input-zone { padding: 15px; background: #000; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
         .chat-input { flex: 1; padding: 12px 20px; background: #111; border: 1px solid var(--border); color: #fff; border-radius: 25px; outline: none; }
         .empty-chat { display: flex; align-items: center; justify-content: center; height: 100%; flex-direction: column; color: var(--text-grey); }
         .empty-icon { font-size: 50px; margin-bottom: 20px; color: #333; border: 2px solid #333; padding: 30px; border-radius: 50%; }
+        
+        /* ATTACHMENT PREVIEW */
+        #file-preview-area {
+            display: none; padding: 10px 20px; background: #111; border-top: 1px solid var(--border); 
+            color: var(--primary); font-size: 13px; align-items: center; justify-content: space-between;
+        }
 
-        /* PROFILE */
+        /* --- PROFILE --- */
         #view-profile { max-width: 935px; margin: 0 auto; padding: 30px 20px; }
         .profile-header { display: flex; margin-bottom: 44px; align-items: flex-start; }
         .p-avatar-container { flex-grow: 1; margin-right: 30px; display: flex; justify-content: center; }
@@ -157,20 +146,18 @@
         .p-top-row { display: flex; align-items: center; margin-bottom: 20px; gap: 20px; flex-wrap: wrap; }
         .p-username { font-size: 24px; font-weight: 400; font-family: 'Inter'; margin: 0; }
         
-        .btn-insta-edit { background-color: var(--btn-grey); border: none; border-radius: 8px; color: #fff; font-weight: 600; padding: 7px 16px; font-size: 14px; cursor: pointer; }
+        .btn-insta-edit { background-color: var(--btn-grey); border: none; border-radius: 8px; color: #fff; font-weight: 600; padding: 7px 16px; font-size: 14px; cursor: pointer; transition: 0.2s; }
+        .btn-insta-edit:hover { background-color: #262626; }
         .btn-insta-action { background-color: var(--primary); border: none; border-radius: 8px; color: #000; font-weight: 600; padding: 7px 20px; font-size: 14px; cursor: pointer; }
         .settings-cog { font-size: 20px; cursor: pointer; margin-left: 10px; }
 
         .p-stats-row { display: flex; gap: 40px; margin-bottom: 20px; font-size: 16px; list-style: none; padding: 0; }
         .stat-num { font-weight: 700; color: #fff; }
-        
         .p-bio-section { font-size: 14px; line-height: 1.5; }
         .p-realname { font-weight: 600; display: block; margin-bottom: 4px; }
-        
         .profile-tabs { border-top: 1px solid var(--border); display: flex; justify-content: center; gap: 60px; margin-bottom: 20px; }
         .tab-item { padding-top: 15px; color: var(--text-grey); font-size: 12px; font-weight: 600; letter-spacing: 1px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-top: 1px solid transparent; margin-top: -1px; }
         .tab-item.active { color: #fff; border-top: 1px solid #fff; }
-        
         .profile-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
         .grid-post-wrap { position: relative; aspect-ratio: 1/1; cursor: pointer; overflow: hidden; }
         .grid-img { width: 100%; height: 100%; object-fit: cover; }
@@ -202,11 +189,25 @@
         /* MODALS */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; }
         .modal-box { background: var(--surface); padding: 30px; width: 400px; border-radius: 10px; border: 1px solid var(--border); text-align: center; }
-        
         .settings-list { list-style: none; padding: 0; text-align: left; }
         .settings-list li { padding: 15px; border-bottom: 1px solid #333; cursor: pointer; transition: 0.2s; color: #fff; }
         .settings-list li:hover { background: #1a1a1a; padding-left: 20px; color: var(--primary); }
         .settings-list li:last-child { border-bottom: none; color: #ff3040; }
+
+        /* FLOATING ACTION BUTTON (NEW POST) */
+        .fab-btn {
+            position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
+            background: var(--primary); border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); z-index: 1000;
+            font-size: 30px; color: #000; transition: 0.2s;
+        }
+        .fab-btn:hover { transform: scale(1.1); }
+        @media (max-width: 800px) { .fab-btn { bottom: 80px; right: 20px; width: 50px; height: 50px; font-size: 24px; } }
+
+        /* NEW POST MODAL PREVIEW */
+        .new-post-preview { max-width: 100%; max-height: 300px; object-fit: contain; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--border); display: none; }
+
     </style>
 </head>
 <body>
@@ -280,7 +281,15 @@
                                 <span id="chat-header-name">User</span>
                             </div>
                             <div class="messages-feed" id="messages-feed"></div>
+                            
+                            <div id="file-preview-area">
+                                <span id="preview-filename"></span>
+                                <i class="fas fa-times" style="cursor:pointer; color:#fff;" onclick="clearChatFile()"></i>
+                            </div>
+
                             <div class="chat-input-zone">
+                                <label for="chat-file-btn" style="cursor:pointer; color:var(--primary); font-size:18px;"><i class="fas fa-paperclip"></i></label>
+                                <input type="file" id="chat-file-btn" hidden onchange="handleChatFileSelect(this)">
                                 <input type="text" id="chat-input" class="chat-input" placeholder="Message...">
                                 <button class="btn" style="background:var(--primary); color:#000; padding:0 20px;" onclick="sendPrivateMsg()">Send</button>
                             </div>
@@ -329,6 +338,30 @@
             <i class="fas fa-envelope" style="color:#fff; font-size:24px;" onclick="nav('messages')"></i>
             <i class="fas fa-user" style="color:#fff; font-size:24px;" onclick="nav('profile')"></i>
         </div>
+
+        <div class="fab-btn" onclick="openPostModal()">
+            <i class="fas fa-plus"></i>
+        </div>
+    </div>
+
+    <div id="new-post-modal" class="modal-overlay">
+        <div class="modal-box" style="width: 500px;">
+            <h3 style="margin-bottom: 20px; color:var(--primary);">INITIATE TRANSMISSION</h3>
+            
+            <label for="post-file-input" class="btn" style="background:#333; color:#fff; padding:10px 20px; display:inline-block; margin-bottom:20px;">
+                <i class="fas fa-camera"></i> Select Image Data
+            </label>
+            <input type="file" id="post-file-input" hidden accept="image/*">
+            
+            <img src="" id="new-post-preview-img" class="new-post-preview">
+            
+            <input type="text" id="post-caption" class="auth-input" placeholder="Enter Title / Caption..." style="margin-bottom: 20px;">
+            
+            <div style="display:flex; gap:10px;">
+                <button class="auth-btn btn" onclick="createPost()">TRANSMIT</button>
+                <button class="btn" style="background:#333; color:#fff; flex:1;" onclick="closePostModal()">CANCEL</button>
+            </div>
+        </div>
     </div>
 
     <div id="edit-modal" class="modal-overlay">
@@ -368,6 +401,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, updateDoc, doc, setDoc, where, getDocs, arrayUnion, limit } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBGK533ImY8ePta_MAOTCq1aW4FjFhBusw",
@@ -381,9 +415,13 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const storage = getStorage(app);
+        
         let userNow = null;
         let activeChatUser = null;
         let unsubscribeChat = null;
+        let selectedChatFile = null;
+        let selectedPostFile = null; // For new posts
 
         // AUTH
         window.login = async () => { try { await signInWithEmailAndPassword(auth, document.getElementById('l-email').value, document.getElementById('l-pass').value); } catch(e) { alert(e.message); } };
@@ -426,7 +464,70 @@
             loadMsgContacts();
         }
 
-        // --- MESSAGES ---
+        // --- NEW POST LOGIC ---
+        window.openPostModal = () => { document.getElementById('new-post-modal').style.display='flex'; };
+        window.closePostModal = () => { 
+            document.getElementById('new-post-modal').style.display='none';
+            document.getElementById('post-file-input').value = "";
+            document.getElementById('post-caption').value = "";
+            document.getElementById('new-post-preview-img').style.display = 'none';
+            document.getElementById('new-post-preview-img').src = "";
+            selectedPostFile = null;
+        };
+
+        document.getElementById('post-file-input').onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            // Double check it's an image
+            if (!file.type.startsWith('image/')) {
+                alert("Only image data accepted.");
+                e.target.value = "";
+                return;
+            }
+            selectedPostFile = file;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const img = document.getElementById('new-post-preview-img');
+                img.src = ev.target.result;
+                img.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        };
+
+        window.createPost = async () => {
+            const caption = document.getElementById('post-caption').value;
+            if(!selectedPostFile) { alert("Image data required."); return; }
+            if(!caption) { alert("Title/Caption required."); return; }
+
+            document.getElementById('loader').style.display='flex';
+            try {
+                // 1. Upload Image
+                const storageRef = ref(storage, `posts/${userNow.uid}/${Date.now()}_${selectedPostFile.name}`);
+                await uploadBytes(storageRef, selectedPostFile);
+                const downloadURL = await getDownloadURL(storageRef);
+
+                // 2. Save Post to Firestore
+                await addDoc(collection(db, "posts"), {
+                    uid: userNow.uid,
+                    user: userNow.displayName,
+                    avatar: userNow.photoURL,
+                    img: downloadURL,
+                    cap: caption,
+                    time: serverTimestamp(),
+                    likes: []
+                });
+
+                closePostModal();
+                nav('home'); // Go to home feed to see new post
+            } catch (error) {
+                alert("Transmission Failed: " + error.message);
+            } finally {
+                document.getElementById('loader').style.display='none';
+            }
+        };
+
+
+        // --- MESSAGES (WITH FILES) ---
         function loadMsgContacts() {
             const q = query(collection(db, "users"), limit(50));
             onSnapshot(q, (snap) => {
@@ -460,18 +561,67 @@
                     const m = docSnap.data();
                     const cls = m.uid === userNow.uid ? 'msg-mine' : 'msg-other';
                     const nameTag = (targetUser.uid === 'global_wwc' && m.uid !== userNow.uid) ? `<div class="msg-username">${m.user}</div>` : '';
-                    feed.innerHTML += `<div class="msg-bubble ${cls}">${nameTag}${m.text}</div>`;
+                    
+                    let content = '';
+                    if(m.mediaUrl) {
+                        if(m.mediaType && m.mediaType.startsWith('image/')) {
+                            content = `<img src="${m.mediaUrl}" class="msg-image" onclick="window.open(this.src)">`;
+                        } else {
+                            content = `<a href="${m.mediaUrl}" target="_blank" class="msg-file-link"><i class="fas fa-file"></i> Attachment</a>`;
+                        }
+                        if(m.text) content += `<div style="margin-top:5px;">${m.text}</div>`;
+                    } else {
+                        content = m.text;
+                    }
+
+                    feed.innerHTML += `<div class="msg-bubble ${cls}">${nameTag}${content}</div>`;
                 });
                 feed.scrollTop = feed.scrollHeight;
             });
         };
 
+        window.handleChatFileSelect = (input) => {
+            if(input.files && input.files[0]) {
+                selectedChatFile = input.files[0];
+                document.getElementById('file-preview-area').style.display = 'flex';
+                document.getElementById('preview-filename').innerText = "Attached: " + selectedChatFile.name;
+            }
+        };
+
+        window.clearChatFile = () => {
+            selectedChatFile = null;
+            document.getElementById('chat-file-btn').value = "";
+            document.getElementById('file-preview-area').style.display = 'none';
+        };
+
         window.sendPrivateMsg = async () => {
             const txt = document.getElementById('chat-input').value;
-            if(!txt || !activeChatUser) return;
+            if((!txt && !selectedChatFile) || !activeChatUser) return;
+            
             let chatId = (activeChatUser.uid === 'global_wwc') ? 'global_wwc' : [userNow.uid, activeChatUser.uid].sort().join("_");
-            await addDoc(collection(db, "chats", chatId, "messages"), { text: txt, uid: userNow.uid, user: userNow.displayName, time: serverTimestamp() });
+            
+            let mediaUrl = null;
+            let mediaType = null;
+
+            if(selectedChatFile) {
+                // Upload File
+                const storageRef = ref(storage, `chat_files/${chatId}/${Date.now()}_${selectedChatFile.name}`);
+                await uploadBytes(storageRef, selectedChatFile);
+                mediaUrl = await getDownloadURL(storageRef);
+                mediaType = selectedChatFile.type;
+            }
+
+            await addDoc(collection(db, "chats", chatId, "messages"), { 
+                text: txt, 
+                uid: userNow.uid, 
+                user: userNow.displayName, 
+                time: serverTimestamp(),
+                mediaUrl: mediaUrl,
+                mediaType: mediaType
+            });
+
             document.getElementById('chat-input').value = "";
+            clearChatFile();
         };
         window.closeChatMobile = () => document.getElementById('msg-window').classList.remove('open');
 
