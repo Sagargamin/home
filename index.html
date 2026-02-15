@@ -82,7 +82,7 @@
         .hero-title { font-family: 'Orbitron', sans-serif; font-size: 2.5rem; color: var(--primary); text-shadow: 0 0 20px rgba(0, 243, 255, 0.4); margin-bottom: 10px; font-weight: 900; letter-spacing: 2px; }
         .hero-sub { color: var(--text-grey); font-size: 1rem; letter-spacing: 1.5px; text-transform: uppercase; }
         
-        /* USER GRID (HOME) */
+        /* USER GRID */
         .feed-container { max-width: 800px; margin: 0 auto; padding: 20px; }
         .agent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
         .agent-card {
@@ -96,21 +96,13 @@
         .agent-btn { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 5px 15px; font-size: 12px; width: 100%; border-radius: 4px; transition: 0.2s; }
         .agent-btn:hover { background: var(--primary); color: #000; }
 
-        /* RIGHT SIDEBAR */
-        .right-sidebar { padding: 30px 20px; overflow-y: auto; }
-        .sugg-title { font-weight: bold; color: var(--text-grey); margin-bottom: 20px; font-size: 14px; }
-        .user-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
-        .u-info { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-        .u-pic { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); }
-        .u-btn { color: var(--primary); font-size: 12px; font-weight: bold; background: none; border: none; cursor: pointer; }
-
-        /* SEARCH VIEW */
+        /* SEARCH */
         #view-search { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
         .search-input { width: 100%; padding: 15px 20px; background: var(--surface); border: 1px solid var(--border); color: #fff; border-radius: 30px; font-size: 16px; outline: none; margin-bottom: 20px; }
         .search-input:focus { border-color: var(--primary); }
         .user-result { display: flex; align-items: center; justify-content: space-between; padding: 15px; border-bottom: 1px solid var(--border); }
         
-        /* NOTIFICATIONS VIEW */
+        /* NOTIFICATIONS */
         #view-notify { max-width: 600px; margin: 0 auto; padding: 20px; }
         .notif-header { font-family: 'Orbitron'; font-size: 1.5rem; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; color: var(--primary); }
         .notif-item { display: flex; align-items: center; gap: 15px; padding: 15px; border-bottom: 1px solid #1a1a1a; transition: 0.2s; }
@@ -219,7 +211,9 @@
         .settings-cog { font-size: 20px; cursor: pointer; margin-left: 10px; }
 
         .p-stats-row { display: flex; gap: 40px; margin-bottom: 20px; font-size: 16px; list-style: none; padding: 0; }
-        .stat-num { font-weight: 700; color: #fff; }
+        .stat-num { font-weight: 700; color: #fff; cursor: pointer; }
+        .stat-num:hover { color: var(--primary); text-decoration: underline; }
+
         .p-bio-section { font-size: 14px; line-height: 1.5; }
         .p-realname { font-weight: 600; display: block; margin-bottom: 4px; }
         .profile-tabs { border-top: 1px solid var(--border); display: flex; justify-content: center; gap: 60px; margin-bottom: 20px; }
@@ -228,6 +222,14 @@
         .profile-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
         .grid-post-wrap { position: relative; aspect-ratio: 1/1; cursor: pointer; overflow: hidden; }
         .grid-img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* RIGHT SIDEBAR */
+        .right-sidebar { padding: 30px 20px; overflow-y: auto; }
+        .sugg-title { font-weight: bold; color: var(--text-grey); margin-bottom: 20px; font-size: 14px; }
+        .user-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
+        .u-info { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .u-pic { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); }
+        .u-btn { color: var(--primary); font-size: 12px; font-weight: bold; background: none; border: none; cursor: pointer; }
 
         /* MOBILE */
         .mobile-nav { display: none; }
@@ -260,6 +262,12 @@
         .settings-list li { padding: 15px; border-bottom: 1px solid #333; cursor: pointer; transition: 0.2s; color: #fff; }
         .settings-list li:hover { background: #1a1a1a; padding-left: 20px; color: var(--primary); }
         .settings-list li:last-child { border-bottom: none; color: #ff3040; }
+        
+        /* LIST MODAL */
+        .list-modal-content { max-height: 300px; overflow-y: auto; text-align: left; margin-top: 15px; }
+        .list-item { display: flex; align-items: center; gap: 10px; padding: 10px; border-bottom: 1px solid #333; cursor: pointer; }
+        .list-item:hover { background: #222; }
+        .list-item img { width: 40px; height: 40px; border-radius: 50%; }
 
     </style>
 </head>
@@ -377,8 +385,8 @@
                             <div class="p-top-row" id="p-action-row"></div>
                             <ul class="p-stats-row">
                                 <li><span class="stat-num" id="p-post-count">0</span> posts</li>
-                                <li><span class="stat-num" id="p-followers">0</span> followers</li>
-                                <li><span class="stat-num" id="p-following">0</span> following</li>
+                                <li><span class="stat-num clickable" id="p-followers" onclick="openListModal('followers')">0</span> followers</li>
+                                <li><span class="stat-num clickable" id="p-following" onclick="openListModal('following')">0</span> following</li>
                             </ul>
                             <div class="p-bio-section">
                                 <span class="p-realname" id="p-name">Full Name</span>
@@ -409,6 +417,14 @@
             <i class="fas fa-bell" style="color:#fff; font-size:24px;" onclick="nav('notify')"></i>
             <i class="fas fa-envelope" style="color:#fff; font-size:24px;" onclick="nav('messages')"></i>
             <i class="fas fa-user" style="color:#fff; font-size:24px;" onclick="nav('profile')"></i>
+        </div>
+    </div>
+
+    <div id="list-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 id="list-title" style="margin-bottom:10px;">LIST</h3>
+            <div id="list-content" class="list-modal-content"></div>
+            <button class="btn" style="background:#333; color:#fff; width:100%; margin-top:20px;" onclick="document.getElementById('list-modal').style.display='none'">CLOSE</button>
         </div>
     </div>
 
@@ -472,6 +488,7 @@
         let unsubscribeProfile = null;
         let selectedChatFile = null;
         let activeChatListener = null; 
+        let currentProfileData = null; // Store current profile data for list view
         
         let myFollowingList = [];
         let allUsersCache = [];
@@ -519,7 +536,7 @@
             onSnapshot(doc(db, "users", userNow.uid), (docSnap) => {
                 if(docSnap.exists()){
                     myFollowingList = docSnap.data().following || [];
-                    renderAllUserLists(); // Re-render when my following changes
+                    renderAllUserLists(); 
                 }
             });
 
@@ -545,23 +562,21 @@
             feedContainer.innerHTML = '';
             suggContainer.innerHTML = '';
 
-            let hasUsers = false;
+            let hasSuggestions = false;
 
+            // 1. HOME GRID: Show EVERYONE (except me)
             allUsersCache.forEach(u => {
-                // Filter: Only show users I am NOT following
-                if(!myFollowingList.includes(u.uid)) {
-                    hasUsers = true;
-                    
-                    // Add to Home Grid
-                    feedContainer.innerHTML += `
-                    <div class="agent-card" onclick="openProfile('${u.uid}')">
-                        <img src="${u.photo}">
-                        <div class="agent-name">${u.name}</div>
-                        <div class="agent-user">@${u.username}</div>
-                        <button class="agent-btn">VIEW PROFILE</button>
-                    </div>`;
+                feedContainer.innerHTML += `
+                <div class="agent-card" onclick="openProfile('${u.uid}')">
+                    <img src="${u.photo}">
+                    <div class="agent-name">${u.name}</div>
+                    <div class="agent-user">@${u.username}</div>
+                    <button class="agent-btn">VIEW PROFILE</button>
+                </div>`;
 
-                    // Add to Right Sidebar
+                // 2. SUGGESTIONS: Only show NOT FOLLOWED
+                if(!myFollowingList.includes(u.uid)) {
+                    hasSuggestions = true;
                     suggContainer.innerHTML += `
                     <div class="user-row">
                         <div class="u-info" onclick="openProfile('${u.uid}')">
@@ -573,15 +588,57 @@
                 }
             });
 
-            if(!hasUsers) {
-                feedContainer.innerHTML = '<div style="color:#777;text-align:center;grid-column:1/-1;">All agents followed.</div>';
-                suggContainer.innerHTML = '<div style="color:#777;text-align:center;">No suggestions.</div>';
+            if(!hasSuggestions) {
+                suggContainer.innerHTML = '<div style="color:#777;text-align:center;">No new agents.</div>';
             }
         }
 
+        // --- LIST MODAL (FOLLOWERS/FOLLOWING) ---
+        window.openListModal = async (type) => {
+            if(!currentProfileData) return;
+            
+            const listIds = (type === 'followers') ? currentProfileData.followers : currentProfileData.following;
+            const modal = document.getElementById('list-modal');
+            const title = document.getElementById('list-title');
+            const content = document.getElementById('list-content');
+            
+            title.innerText = type.toUpperCase();
+            content.innerHTML = '<div style="text-align:center; padding:20px;">Loading...</div>';
+            modal.style.display = 'flex';
+            
+            if(!listIds || listIds.length === 0) {
+                content.innerHTML = '<div style="text-align:center; padding:20px; color:#555;">List is empty.</div>';
+                return;
+            }
+
+            // Fetch users in list
+            content.innerHTML = "";
+            // Since firestore 'in' query has limit 10, we iterate manually or fetch all users (we have allUsersCache)
+            // Using allUsersCache is faster and saves reads
+            
+            // Add 'Me' to cache logic temporarily for this list view if needed, but usually cache has everyone else
+            // If viewing my own list, I won't be in cache. If viewing others, they might be in my cache.
+            
+            // Safer: Fetch specific docs
+            for(const uid of listIds) {
+                const docRef = doc(db, "users", uid);
+                const docSnap = await getDoc(docRef);
+                if(docSnap.exists()) {
+                    const u = docSnap.data();
+                    content.innerHTML += `
+                    <div class="list-item" onclick="openProfile('${u.uid}'); document.getElementById('list-modal').style.display='none';">
+                        <img src="${u.photo}">
+                        <div>
+                            <div style="font-weight:bold;">${u.username}</div>
+                            <div style="font-size:12px; color:#aaa;">${u.name}</div>
+                        </div>
+                    </div>`;
+                }
+            }
+        };
+
         // --- NOTIFICATIONS (REQUESTS LOGIC) ---
         function listenToNotifications() {
-            // Simple query to avoid index errors (sorting in JS)
             const q = query(collection(db, "notifications"), where("targetUid", "==", userNow.uid));
             onSnapshot(q, (snap) => {
                 const list = document.getElementById('notify-list');
@@ -590,7 +647,6 @@
                 
                 let notifs = [];
                 snap.forEach(d => notifs.push({id: d.id, ...d.data()}));
-                // Sort by time descending
                 notifs.sort((a,b) => b.time - a.time);
 
                 notifs.forEach(n => {
@@ -599,7 +655,6 @@
 
                     if(n.type === 'message_request') {
                         contentText = "wants to send you a message.";
-                        // Only show buttons if pending
                         if(n.status === 'pending') {
                             actionHtml = `
                             <div class="notif-actions">
@@ -705,7 +760,6 @@
             document.getElementById('active-chat-ui').style.display = 'flex';
             document.getElementById('msg-window').classList.add('open');
 
-            // UI Reset (Show Input by default)
             document.querySelector('.chat-input-zone').style.display = 'flex';
             document.getElementById('chat-blocked-msg').style.display = 'none';
             document.getElementById('chat-pending-msg').style.display = 'none';
@@ -717,7 +771,6 @@
                 document.getElementById('chat-main-header').onclick = () => openProfile(targetUser.uid);
             }
 
-            // --- CHECK CHAT PERMISSIONS ---
             if(activeChatListener) activeChatListener();
             
             if(targetUser.uid !== 'global_wwc') {
@@ -732,12 +785,10 @@
                             document.getElementById('chat-blocked-msg').style.display = 'block';
                             document.getElementById('chat-pending-msg').style.display = 'none';
                         } else if(status === 'pending') {
-                            // If I am the requester, show "Pending" but HIDE input
                             if(data.requester === userNow.uid) {
                                 document.querySelector('.chat-input-zone').style.display = 'none';
                                 document.getElementById('chat-pending-msg').style.display = 'block';
                             }
-                            // If I am recipient, I see buttons in Notify tab, but I can still see chat here (optional)
                         } else if(status === 'accepted') {
                             document.querySelector('.chat-input-zone').style.display = 'flex';
                             document.getElementById('chat-blocked-msg').style.display = 'none';
@@ -747,7 +798,6 @@
                 });
             }
 
-            // Header Status Logic
             if(unsubscribeUserStatus) unsubscribeUserStatus();
             if(targetUser.uid !== 'global_wwc') {
                 unsubscribeUserStatus = onSnapshot(doc(db, "users", targetUser.uid), (docSnap) => {
@@ -833,24 +883,20 @@
             try {
                 let chatId = (activeChatUser.uid === 'global_wwc') ? 'global_wwc' : [userNow.uid, activeChatUser.uid].sort().join("_");
                 
-                // --- REQUEST LOGIC ---
                 if(activeChatUser.uid !== 'global_wwc') {
                     const chatDocRef = doc(db, "chats", chatId);
                     const chatSnap = await getDoc(chatDocRef);
                     
                     if(!chatSnap.exists()) {
-                        // First message -> Pending
                         await setDoc(chatDocRef, {
                             status: 'pending',
                             requester: userNow.uid,
                             recipient: activeChatUser.uid,
                             createdAt: serverTimestamp()
                         });
-                        // Create Notification
                         createNotification(activeChatUser.uid, 'message_request', chatId);
                     }
                 }
-                // ---------------------
 
                 let mediaUrl = null;
                 let mediaType = null;
@@ -870,10 +916,7 @@
                     mediaType: mediaType
                 });
                 
-                // Notify if NOT WWC
                 if(activeChatUser.uid !== 'global_wwc') {
-                    // Check if already pending or accepted, maybe just send normal notification?
-                    // For now, simple logic:
                     createNotification(activeChatUser.uid, 'message');
                 }
 
@@ -896,6 +939,8 @@
             unsubscribeProfile = onSnapshot(doc(db, "users", uid), (s) => {
                 if(s.exists()){ 
                     const d=s.data(); 
+                    currentProfileData = d; // Store for list modal
+                    
                     document.getElementById('p-img').src=d.photo; 
                     document.getElementById('p-name').innerText=d.name; 
                     document.getElementById('p-bio').innerText=d.bio;
@@ -921,22 +966,8 @@
             });
             onSnapshot(query(collection(db, "posts"), where("uid", "==", uid)), (s)=>{
                 const g=document.getElementById('p-grid'); g.innerHTML=''; 
-                // Posts removed, keeping grid empty or for future use
             });
         };
-
-        // --- SEARCH & FOLLOW ACTIONS ---
-        async function loadSuggestions() {
-            const q = query(collection(db, "users"), limit(20));
-            const snap = await getDocs(q);
-            const list = document.getElementById('suggestions-list');
-            list.innerHTML = "";
-            snap.forEach(d => {
-                const u = d.data();
-                if(u.uid === userNow.uid) return;
-                list.innerHTML += `<div class="user-row"><div class="u-info" onclick="openProfile('${u.uid}')"><img src="${u.photo}" class="u-pic"><div><div style="font-weight:bold; font-size:13px;">${u.username}</div><div style="color:var(--text-grey); font-size:11px;">${u.name}</div></div></div><button class="u-btn" onclick="follow('${u.uid}')">Follow</button></div>`;
-            });
-        }
 
         window.searchUsers = async () => {
             const val = document.getElementById('search-input').value.toLowerCase();
