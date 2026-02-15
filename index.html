@@ -17,6 +17,7 @@
             --text-grey: #a8a8a8;
             --btn-grey: #363636;
             --danger: #ff3040;
+            --success: #00ff88;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
@@ -80,40 +81,39 @@
         }
         .hero-title { font-family: 'Orbitron', sans-serif; font-size: 2.5rem; color: var(--primary); text-shadow: 0 0 20px rgba(0, 243, 255, 0.4); margin-bottom: 10px; font-weight: 900; letter-spacing: 2px; }
         .hero-sub { color: var(--text-grey); font-size: 1rem; letter-spacing: 1.5px; text-transform: uppercase; }
-        .empty-feed { text-align: center; padding: 50px; color: var(--text-grey); font-family: 'Orbitron', sans-serif; }
+        
+        /* USER GRID */
+        .feed-container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        .agent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
+        .agent-card {
+            background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px;
+            text-align: center; transition: 0.3s; cursor: pointer;
+        }
+        .agent-card:hover { border-color: var(--primary); transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0, 243, 255, 0.1); }
+        .agent-card img { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border); margin-bottom: 10px; }
+        .agent-name { font-weight: bold; color: #fff; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 2px; }
+        .agent-user { color: var(--text-grey); font-size: 12px; margin-bottom: 15px; display: block; }
+        .agent-btn { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 5px 15px; font-size: 12px; width: 100%; border-radius: 4px; transition: 0.2s; }
+        .agent-btn:hover { background: var(--primary); color: #000; }
 
-        /* FEED */
-        .feed-container { max-width: 500px; margin: 0 auto; padding: 20px; }
-        .post-card { margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
-        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .post-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; cursor: pointer; }
-        .post-img { width: 100%; border-radius: 5px; border: 1px solid var(--border); }
-        .post-actions { padding: 10px 0; font-size: 24px; display: flex; gap: 20px; }
-        .liked { color: #ff3040; }
-
-        /* RIGHT SIDEBAR */
-        .right-sidebar { padding: 30px 20px; overflow-y: auto; }
-        .sugg-title { font-weight: bold; color: var(--text-grey); margin-bottom: 20px; font-size: 14px; }
-        .user-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
-        .u-info { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-        .u-pic { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); }
-        .u-btn { color: var(--primary); font-size: 12px; font-weight: bold; background: none; border: none; cursor: pointer; }
-
-        /* SEARCH VIEW */
+        /* SEARCH */
         #view-search { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
         .search-input { width: 100%; padding: 15px 20px; background: var(--surface); border: 1px solid var(--border); color: #fff; border-radius: 30px; font-size: 16px; outline: none; margin-bottom: 20px; }
         .search-input:focus { border-color: var(--primary); }
         .user-result { display: flex; align-items: center; justify-content: space-between; padding: 15px; border-bottom: 1px solid var(--border); }
         
-        /* NOTIFICATIONS VIEW */
+        /* NOTIFICATIONS */
         #view-notify { max-width: 600px; margin: 0 auto; padding: 20px; }
         .notif-header { font-family: 'Orbitron'; font-size: 1.5rem; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; color: var(--primary); }
         .notif-item { display: flex; align-items: center; gap: 15px; padding: 15px; border-bottom: 1px solid #1a1a1a; transition: 0.2s; }
         .notif-item:hover { background: #111; }
         .notif-pic { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); }
-        .notif-text { font-size: 14px; color: #fff; flex: 1; }
-        .notif-time { font-size: 11px; color: var(--text-grey); }
+        .notif-content { flex: 1; }
+        .notif-text { font-size: 14px; color: #fff; margin-bottom: 5px; }
         .notif-highlight { color: var(--primary); font-weight: bold; }
+        .notif-actions { display: flex; gap: 10px; }
+        .btn-req-accept { background: var(--success); color: #000; border: none; padding: 5px 15px; font-size: 12px; font-weight: bold; border-radius: 4px; }
+        .btn-req-deny { background: var(--danger); color: #fff; border: none; padding: 5px 15px; font-size: 12px; font-weight: bold; border-radius: 4px; }
 
         /* MESSAGES */
         #view-messages { display: flex; height: 100%; width: 100%; overflow: hidden; }
@@ -121,7 +121,6 @@
         .msg-header { padding: 20px; font-size: 20px; font-weight: bold; border-bottom: 1px solid var(--border); }
         .contact-list { flex: 1; overflow-y: auto; }
         
-        /* Contact Item */
         .contact-item { 
             display: flex; align-items: center; gap: 15px; padding: 15px 20px; 
             cursor: pointer; transition: 0.2s; border-bottom: 1px solid #1a1a1a; 
@@ -191,6 +190,12 @@
             color: var(--primary); font-size: 13px; align-items: center; justify-content: space-between;
         }
 
+        #chat-blocked-msg {
+            width: 100%; text-align: center; color: var(--danger); font-weight: bold; 
+            padding: 15px; background: #1a0000; border-top: 1px solid var(--danger);
+            display: none;
+        }
+
         /* --- PROFILE --- */
         #view-profile { max-width: 935px; margin: 0 auto; padding: 30px 20px; }
         .profile-header { display: flex; margin-bottom: 44px; align-items: flex-start; }
@@ -214,6 +219,14 @@
         .profile-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
         .grid-post-wrap { position: relative; aspect-ratio: 1/1; cursor: pointer; overflow: hidden; }
         .grid-img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* RIGHT SIDEBAR */
+        .right-sidebar { padding: 30px 20px; overflow-y: auto; }
+        .sugg-title { font-weight: bold; color: var(--text-grey); margin-bottom: 20px; font-size: 14px; }
+        .user-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
+        .u-info { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .u-pic { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); }
+        .u-btn { color: var(--primary); font-size: 12px; font-weight: bold; background: none; border: none; cursor: pointer; }
 
         /* MOBILE */
         .mobile-nav { display: none; }
@@ -291,9 +304,11 @@
                 <div id="view-home" class="view-section">
                     <div class="hero-section">
                         <h1 class="hero-title">CYBERHUB</h1>
-                        <p class="hero-sub">CONNECT • ENCRYPT • SHARE</p>
+                        <p class="hero-sub">GLOBAL AGENT DIRECTORY</p>
                     </div>
-                    <div class="feed-container" id="feed-list"></div>
+                    <div class="feed-container">
+                        <div id="feed-list" class="agent-grid"></div>
+                    </div>
                 </div>
 
                 <div id="view-search" class="view-section hidden">
@@ -345,6 +360,8 @@
                                 <input type="text" id="chat-input" class="chat-input" placeholder="Type a message...">
                                 <button class="btn-send" id="send-msg-btn" onclick="sendPrivateMsg()"><i class="fas fa-paper-plane"></i></button>
                             </div>
+                            
+                            <div id="chat-blocked-msg">You can't Message Here</div>
                         </div>
                     </div>
                 </div>
@@ -429,7 +446,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, updateDoc, doc, setDoc, where, getDocs, arrayUnion, arrayRemove, limit } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, updateDoc, doc, setDoc, where, getDocs, arrayUnion, arrayRemove, limit, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
 
         const firebaseConfig = {
@@ -452,6 +469,7 @@
         let unsubscribeUserStatus = null;
         let unsubscribeProfile = null;
         let selectedChatFile = null;
+        let activeChatListener = null; // Listener for Chat Doc Status
 
         // AUTH
         window.login = async () => { try { await signInWithEmailAndPassword(auth, document.getElementById('l-email').value, document.getElementById('l-pass').value); } catch(e) { alert(e.message); } };
@@ -492,62 +510,95 @@
         }
 
         function initApp() {
-            onSnapshot(query(collection(db, "posts"), orderBy("time", "desc")), (snap) => {
-                const c = document.getElementById('feed-list'); c.innerHTML='';
-                if(snap.empty) { c.innerHTML = '<div class="empty-feed">No Transmissions Detected</div>'; }
-                else {
-                    snap.forEach(d => { const p=d.data(); const l=p.likes&&p.likes.includes(userNow.uid)?'liked':'';
-                        c.innerHTML+=`<div class="post-card"><div class="post-header"><img src="${p.avatar}" class="post-avatar" onclick="openProfile('${p.uid}')"><span style="font-weight:600; cursor:pointer;" onclick="openProfile('${p.uid}')">${p.user}</span></div><img src="${p.img}" class="post-img"><div class="post-actions"><i class="fas fa-heart ${l}" onclick="like('${d.id}')"></i></div><div><b>${p.user}</b> ${p.cap}</div></div>`;
-                    });
-                }
+            // HOME: LOAD ALL USERS GRID
+            onSnapshot(collection(db, "users"), (snap) => {
+                const c = document.getElementById('feed-list'); 
+                c.innerHTML = ''; 
+                if (snap.empty) { c.innerHTML = '<div style="color:#777;text-align:center;">No Agents Found</div>'; return; }
+                let html = '';
+                snap.forEach(docSnap => {
+                    const u = docSnap.data();
+                    if(u.uid === userNow.uid) return;
+                    html += `
+                    <div class="agent-card" onclick="openProfile('${u.uid}')">
+                        <img src="${u.photo}">
+                        <div class="agent-name">${u.name}</div>
+                        <div class="agent-user">@${u.username}</div>
+                        <button class="agent-btn">VIEW PROFILE</button>
+                    </div>`;
+                });
+                c.innerHTML = html;
             });
+
             loadSuggestions();
             loadMsgContacts();
             listenToNotifications();
         }
 
-        // --- NOTIFICATIONS SYSTEM ---
+        // --- NOTIFICATIONS (REQUESTS LOGIC) ---
         function listenToNotifications() {
-            // Listen for notifications where target is me
             const q = query(collection(db, "notifications"), where("targetUid", "==", userNow.uid), orderBy("time", "desc"), limit(20));
             onSnapshot(q, (snap) => {
                 const list = document.getElementById('notify-list');
                 list.innerHTML = "";
-                if(snap.empty) {
-                    list.innerHTML = `<div style="text-align:center;color:#555;padding:20px;">No activity yet.</div>`;
-                    return;
-                }
+                if(snap.empty) { list.innerHTML = `<div style="text-align:center;color:#555;padding:20px;">No activity yet.</div>`; return; }
+                
                 snap.forEach(d => {
                     const n = d.data();
-                    let actionText = "";
-                    if(n.type === 'follow') actionText = "started following you.";
-                    if(n.type === 'unfollow') actionText = "unfollowed you.";
-                    if(n.type === 'message') actionText = "sent you a message.";
+                    const nid = d.id;
+                    let actionHtml = "";
+                    let contentText = "";
+
+                    if(n.type === 'message_request') {
+                        contentText = "wants to send you a message.";
+                        // Only show buttons if pending
+                        if(n.status === 'pending') {
+                            actionHtml = `
+                            <div class="notif-actions">
+                                <button class="btn-req-accept" onclick="respondRequest('${n.chatId}', '${nid}', 'accept')">Confirm</button>
+                                <button class="btn-req-deny" onclick="respondRequest('${n.chatId}', '${nid}', 'deny')">Delete</button>
+                            </div>`;
+                        } else {
+                            actionHtml = `<div style="font-size:11px; color:#555; margin-top:5px;">${n.status.toUpperCase()}</div>`;
+                        }
+                    } else if(n.type === 'follow') contentText = "started following you.";
+                    else if(n.type === 'unfollow') contentText = "unfollowed you.";
                     
                     list.innerHTML += `
                     <div class="notif-item">
                         <img src="${n.actorPic}" class="notif-pic">
-                        <div class="notif-text">
-                            <span class="notif-highlight">${n.actorName}</span> ${actionText}
+                        <div class="notif-content">
+                            <div class="notif-text"><span class="notif-highlight">${n.actorName}</span> ${contentText}</div>
+                            ${actionHtml}
                         </div>
                     </div>`;
                 });
             });
         }
 
-        async function createNotification(targetUid, type) {
-            if(targetUid === userNow.uid) return; // Don't notify self
+        async function createNotification(targetUid, type, chatId = null) {
+            if(targetUid === userNow.uid) return;
             await addDoc(collection(db, "notifications"), {
                 targetUid: targetUid,
                 type: type,
                 actorUid: userNow.uid,
                 actorName: userNow.displayName,
                 actorPic: userNow.photoURL,
-                time: serverTimestamp()
+                time: serverTimestamp(),
+                chatId: chatId,
+                status: 'pending' // Only relevant for requests
             });
         }
 
-        // --- MESSAGES ---
+        window.respondRequest = async (chatId, notifId, action) => {
+            const status = (action === 'accept') ? 'accepted' : 'denied';
+            // Update Chat Status
+            await updateDoc(doc(db, "chats", chatId), { status: status });
+            // Update Notification Status (so buttons disappear)
+            await updateDoc(doc(db, "notifications", notifId), { status: status });
+        };
+
+        // --- MESSAGES (UPDATED LOGIC) ---
         function loadMsgContacts() {
             const q = query(collection(db, "users"), limit(50));
             onSnapshot(q, (snap) => {
@@ -600,13 +651,16 @@
             if(confirm("Remove from view?")) { element.closest('.contact-item').remove(); }
         };
 
-        window.startPrivateChat = (targetUser) => {
+        window.startPrivateChat = async (targetUser) => {
             activeChatUser = targetUser;
             document.getElementById('empty-chat-state').classList.add('hidden');
             document.getElementById('active-chat-ui').classList.remove('hidden');
             document.getElementById('active-chat-ui').style.display = 'flex';
             document.getElementById('msg-window').classList.add('open');
 
+            // UI Reset
+            document.querySelector('.chat-input-zone').style.display = 'flex';
+            document.getElementById('chat-blocked-msg').style.display = 'none';
             document.getElementById('chat-header-name').innerText = targetUser.name || targetUser.username;
             document.getElementById('chat-header-pic').src = targetUser.photo;
             
@@ -614,6 +668,26 @@
                 document.getElementById('chat-main-header').onclick = () => openProfile(targetUser.uid);
             }
 
+            // LISTEN TO CHAT STATUS (BLOCK/ACCEPT LOGIC)
+            if(activeChatListener) activeChatListener();
+            if(targetUser.uid !== 'global_wwc') {
+                const chatId = [userNow.uid, targetUser.uid].sort().join("_");
+                activeChatListener = onSnapshot(doc(db, "chats", chatId), (s) => {
+                    if(s.exists()) {
+                        const status = s.data().status;
+                        if(status === 'denied') {
+                            document.querySelector('.chat-input-zone').style.display = 'none';
+                            document.getElementById('chat-blocked-msg').style.display = 'block';
+                        } else if(status === 'accepted') {
+                            document.querySelector('.chat-input-zone').style.display = 'flex';
+                            document.getElementById('chat-blocked-msg').style.display = 'none';
+                        }
+                        // if 'pending', we still allow sender to see input, but receiver sees request
+                    }
+                });
+            }
+
+            // HEADER STATUS
             if(unsubscribeUserStatus) unsubscribeUserStatus();
             if(targetUser.uid !== 'global_wwc') {
                 unsubscribeUserStatus = onSnapshot(doc(db, "users", targetUser.uid), (docSnap) => {
@@ -622,6 +696,7 @@
                         const lastSeen = data.lastSeen ? data.lastSeen.toDate() : null;
                         const now = new Date();
                         const statusEl = document.getElementById('chat-header-status');
+                        
                         if(lastSeen && (now - lastSeen) < 120000) {
                             statusEl.innerHTML = '<span class="online-dot">●</span> Online';
                             statusEl.style.color = "#fff";
@@ -635,8 +710,8 @@
                 document.getElementById('chat-header-status').innerText = "Always Online";
             }
 
+            // MESSAGES
             let chatId = (targetUser.uid === 'global_wwc') ? 'global_wwc' : [userNow.uid, targetUser.uid].sort().join("_");
-            
             if(unsubscribeChat) unsubscribeChat();
             const q = query(collection(db, "chats", chatId, "messages"), orderBy("time", "asc"));
             unsubscribeChat = onSnapshot(q, (snap) => {
@@ -698,6 +773,31 @@
             btn.disabled = true;
             try {
                 let chatId = (activeChatUser.uid === 'global_wwc') ? 'global_wwc' : [userNow.uid, activeChatUser.uid].sort().join("_");
+                
+                // --- REQUEST LOGIC (Create Chat Doc if not exists) ---
+                if(activeChatUser.uid !== 'global_wwc') {
+                    const chatDocRef = doc(db, "chats", chatId);
+                    const chatSnap = await getDoc(chatDocRef);
+                    
+                    if(!chatSnap.exists()) {
+                        // First message -> Create Request
+                        await setDoc(chatDocRef, {
+                            status: 'pending',
+                            requester: userNow.uid,
+                            recipient: activeChatUser.uid,
+                            createdAt: serverTimestamp()
+                        });
+                        // Notify Receiver
+                        createNotification(activeChatUser.uid, 'message_request', chatId);
+                    } else {
+                        // Check if blocked
+                        if(chatSnap.data().status === 'denied') {
+                            throw new Error("Cannot message this user.");
+                        }
+                    }
+                }
+                // --------------------------------------------------
+
                 let mediaUrl = null;
                 let mediaType = null;
                 if(selectedChatFile) {
@@ -716,11 +816,6 @@
                     mediaType: mediaType
                 });
                 
-                // NOTIFY USER
-                if(activeChatUser.uid !== 'global_wwc') {
-                    createNotification(activeChatUser.uid, 'message');
-                }
-
                 document.getElementById('chat-input').value = "";
                 clearChatFile();
             } catch (e) {
@@ -732,7 +827,7 @@
         };
         window.closeChatMobile = () => document.getElementById('msg-window').classList.remove('open');
 
-        // --- PROFILE (DYNAMIC FOLLOW) ---
+        // --- PROFILE ---
         window.openProfile = (uid) => {
             if(!uid) uid = userNow.uid;
             if(unsubscribeProfile) unsubscribeProfile();
@@ -754,7 +849,6 @@
                         document.getElementById('edit-bio').value=d.bio;
                         document.getElementById('edit-gender').value=d.gender || "";
                     } else {
-                        // CHECK IF FOLLOWING
                         const isFollowing = d.followers && d.followers.includes(userNow.uid);
                         let btnHtml = isFollowing 
                             ? `<button class="btn-insta-edit" onclick="unfollow('${d.uid}')">Following</button>`
@@ -765,8 +859,7 @@
                 }
             });
             onSnapshot(query(collection(db, "posts"), where("uid", "==", uid)), (s)=>{
-                const g=document.getElementById('p-grid'); g.innerHTML=''; document.getElementById('p-post-count').innerText=s.size;
-                s.forEach(d=>g.innerHTML+=`<div class="grid-post-wrap"><img src="${d.data().img}" class="grid-img"></div>`);
+                const g=document.getElementById('p-grid'); g.innerHTML=''; 
             });
         };
 
@@ -798,7 +891,6 @@
             });
         };
 
-        // FOLLOW LOGIC (WITH NOTIFICATION)
         window.follow = async(id) => {
             try {
                 await updateDoc(doc(db,"users",userNow.uid),{following:arrayUnion(id)});
@@ -807,7 +899,6 @@
             } catch(e) { console.error(e); }
         };
 
-        // UNFOLLOW LOGIC (WITH NOTIFICATION)
         window.unfollow = async(id) => {
             try {
                 await updateDoc(doc(db,"users",userNow.uid),{following:arrayRemove(id)});
@@ -815,8 +906,6 @@
                 createNotification(id, 'unfollow');
             } catch(e) { console.error(e); }
         };
-
-        window.like = async(pid)=>{const r=doc(db,"posts",pid);const s=await getDoc(r);const l=s.data().likes||[];if(l.includes(userNow.uid)){await updateDoc(r,{likes:arrayRemove(userNow.uid)})}else{await updateDoc(r,{likes:arrayUnion(userNow.uid)})}};
         
         window.openSettings=()=>document.getElementById('settings-modal').style.display='flex';
         window.openEditModal=()=>document.getElementById('edit-modal').style.display='flex';
